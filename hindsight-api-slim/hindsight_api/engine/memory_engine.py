@@ -3181,22 +3181,29 @@ class MemoryEngine(MemoryEngineInterface):
 
         async def init_embeddings():
             """Initialize embedding model."""
-            # For local providers, run in thread pool to avoid blocking event loop
-            if self.embeddings.provider_name == "local":
-                await loop.run_in_executor(None, lambda: asyncio.run(self.embeddings.initialize()))
-            else:
-                await self.embeddings.initialize()
+            try:
+                # For local providers, run in thread pool to avoid blocking event loop
+                if self.embeddings.provider_name == "local":
+                    await loop.run_in_executor(None, lambda: asyncio.run(self.embeddings.initialize()))
+                else:
+                    await self.embeddings.initialize()
+                logger.info(f"Embeddings initialized: provider={self.embeddings.provider_name}, dim={self.embeddings.dimension}")
+            except Exception as e:
+                logger.warning(f"Embeddings initialization failed: {e}. Continuing without embeddings.")
+                self._embeddings_failed = True
 
         async def init_cross_encoder():
             """Initialize cross-encoder model."""
-            cross_encoder = self._cross_encoder_reranker.cross_encoder
-            # For in-process models, run in thread pool to avoid blocking event loop.
-            # getattr: tests inject duck-typed cross encoders that don't subclass
-            # CrossEncoderModel (same reason as the provider_name read in _recall).
-            if getattr(cross_encoder, "blocking_init", False):
-                await loop.run_in_executor(None, lambda: asyncio.run(cross_encoder.initialize()))
-            else:
-                await cross_encoder.initialize()
+            try:
+                cross_encoder = self._cross_encoder_reranker.cross_encoder
+                # For local providers, run in thread pool to avoid blocking event loop
+                if cross_encoder.provider_name == "local":
+                    await loop.run_in_executor(None, lambda: asyncio.run(cross_encoder.initialize()))
+                else:
+                    await cross_encoder.initialize()
+                logger.info("Cross-encoder initialized")
+            except Exception as e:
+                logger.warning(f"Cross-encoder initialization failed: {e}. Continuing without reranking.")
             # Mark reranker as initialized
             self._cross_encoder_reranker._initialized = True
 
@@ -15691,4 +15698,48 @@ class MemoryEngine(MemoryEngineInterface):
         raise LLMNotAvailableError(
             "Mental model refresh requires an LLM provider. Current provider is set to 'none'. "
             "Set HINDSIGHT_API_LLM_PROVIDER to a real provider (e.g., openai, anthropic, gemini)."
+        )
+
+    async def submit_async_refresh_mental_model_scheduled(
+        self,
+        bank_id: str,
+        mental_model_id: str,
+        request_context: "RequestContext",
+    ) -> dict[str, Any]:
+        """Submit an async mental model refresh for a time-scheduled trigger.
+
+        Unlike submit_async_refresh_mental_model, this version does NOT check
+        the LLM provider (workers have their own LLM config). It also does NOT
+        validate the operation via the operation validator (scheduler is internal).
+
+        Args:
+            bank_id: Bank identifier
+            mental_model_id: Mental model UUID to refresh
+            request_context: Request context for authentication
+
+        Returns:
+            Dict with operation_id
+        """
+        await self._authenticate_tenant(request_context)
+
+        # Verify mental model exists
+        mental_model = await self.get_mental_model(bank_id, mental_model_id, request_context=request_context)
+        if not mental_model:
+            raise ValueError(f"Mental model {mental_model_id} not found in bank {bank_id}")
+
+        task_payload: dict[str, Any] = {
+            "mental_model_id": mental_model_id,
+        }
+        if request_context.tenant_id:
+            task_payload["_tenant_id"] = request_context.tenant_id
+        if request_context.api_key_id:
+            task_payload["_api_key_id"] = request_context.api_key_id
+
+        return await self._submit_async_operation(
+            bank_id=bank_id,
+            operation_type="refresh_mental_model",
+            task_type="refresh_mental_model",
+            task_payload=task_payload,
+            result_metadata={"mental_model_id": mental_model_id, "name": mental_model["name"]},
+            dedupe_by_bank=False,
         )
