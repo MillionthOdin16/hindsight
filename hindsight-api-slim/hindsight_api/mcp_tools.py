@@ -1342,6 +1342,7 @@ def _register_create_mental_model(mcp: FastMCP, memory: MemoryEngine, config: MC
             tags: list[str] | None = None,
             max_tokens: int = 2048,
             trigger_refresh_after_consolidation: bool = False,
+            trigger_refresh_after_time: str | None = None,
             bank_id: str | None = None,
         ) -> str:
             """
@@ -1352,6 +1353,8 @@ def _register_create_mental_model(mcp: FastMCP, memory: MemoryEngine, config: MC
             to track progress.
 
             EXAMPLES:
+            - name="Daily Briefing", source_query="What happened today?", trigger_refresh_after_time="1d"
+            - name="Weekly Summary", source_query="What happened this week?", trigger_refresh_after_time="0 9 * * 1"
             - name="Coding Preferences", source_query="What coding patterns and tools does the user prefer?"
             - name="Project Goals", source_query="What are the user's current project goals and priorities?"
             - name="Communication Style", source_query="How does the user prefer to communicate?"
@@ -1363,6 +1366,7 @@ def _register_create_mental_model(mcp: FastMCP, memory: MemoryEngine, config: MC
                 tags: Optional tags for scoped visibility filtering
                 max_tokens: Maximum tokens for generated content (256-8192, default: 2048)
                 trigger_refresh_after_consolidation: If True, automatically refresh this model after memory consolidation. Default: False
+                trigger_refresh_after_time: If set, refresh on a time schedule. Supports duration strings like '1h', '30m', '1d', or cron expressions like '0 9 * * *' (every day at 9am UTC). Default: None
                 bank_id: Optional bank (defaults to session bank). Use for cross-bank operations.
             """
             try:
@@ -1377,7 +1381,9 @@ def _register_create_mental_model(mcp: FastMCP, memory: MemoryEngine, config: MC
                     return json.dumps({"error": validation_error})
 
                 request_context = _get_request_context(config)
-                trigger = {"refresh_after_consolidation": trigger_refresh_after_consolidation}
+                trigger: dict[str, Any] = {"refresh_after_consolidation": trigger_refresh_after_consolidation}
+                if trigger_refresh_after_time:
+                    trigger["refresh_after_time"] = trigger_refresh_after_time
 
                 # Create with placeholder content
                 model = await memory.create_mental_model(
@@ -1426,6 +1432,7 @@ def _register_create_mental_model(mcp: FastMCP, memory: MemoryEngine, config: MC
             tags: list[str] | None = None,
             max_tokens: int = 2048,
             trigger_refresh_after_consolidation: bool = False,
+            trigger_refresh_after_time: str | None = None,
         ) -> dict:
             """
             Create a new mental model (pinned reflection).
@@ -1435,6 +1442,8 @@ def _register_create_mental_model(mcp: FastMCP, memory: MemoryEngine, config: MC
             to track progress.
 
             EXAMPLES:
+            - name="Daily Briefing", source_query="What happened today?", trigger_refresh_after_time="1d"
+            - name="Weekly Summary", source_query="What happened this week?", trigger_refresh_after_time="0 9 * * 1"
             - name="Coding Preferences", source_query="What coding patterns and tools does the user prefer?"
             - name="Project Goals", source_query="What are the user's current project goals and priorities?"
             - name="Communication Style", source_query="How does the user prefer to communicate?"
@@ -1446,6 +1455,7 @@ def _register_create_mental_model(mcp: FastMCP, memory: MemoryEngine, config: MC
                 tags: Optional tags for scoped visibility filtering
                 max_tokens: Maximum tokens for generated content (256-8192, default: 2048)
                 trigger_refresh_after_consolidation: If True, automatically refresh this model after memory consolidation. Default: False
+                trigger_refresh_after_time: If set, refresh on a time schedule. Supports duration strings like '1h', '30m', '1d', or cron expressions like '0 9 * * *' (every day at 9am UTC). Default: None
             """
             try:
                 target_bank = config.bank_id_resolver()
@@ -1459,7 +1469,9 @@ def _register_create_mental_model(mcp: FastMCP, memory: MemoryEngine, config: MC
                     return {"error": validation_error}
 
                 request_context = _get_request_context(config)
-                trigger = {"refresh_after_consolidation": trigger_refresh_after_consolidation}
+                trigger: dict[str, Any] = {"refresh_after_consolidation": trigger_refresh_after_consolidation}
+                if trigger_refresh_after_time:
+                    trigger["refresh_after_time"] = trigger_refresh_after_time
 
                 model = await memory.create_mental_model(
                     bank_id=target_bank,
@@ -1508,6 +1520,7 @@ def _register_update_mental_model(mcp: FastMCP, memory: MemoryEngine, config: MC
             max_tokens: int | None = None,
             tags: list[str] | None = None,
             trigger_refresh_after_consolidation: bool | None = None,
+            trigger_refresh_after_time: str | None = None,
             bank_id: str | None = None,
         ) -> str:
             """
@@ -1523,6 +1536,7 @@ def _register_update_mental_model(mcp: FastMCP, memory: MemoryEngine, config: MC
                 max_tokens: New max tokens for content generation (256-8192, leave None to keep current)
                 tags: New tags (leave None to keep current)
                 trigger_refresh_after_consolidation: If set, update whether this model auto-refreshes after consolidation
+                trigger_refresh_after_time: If set, update the time-based refresh schedule. Supports duration strings like '1h', '30m', '1d', or cron expressions like '0 9 * * *' (every day at 9am UTC). Pass empty string "" to clear.
                 bank_id: Optional bank (defaults to session bank). Use for cross-bank operations.
             """
             try:
@@ -1547,6 +1561,17 @@ def _register_update_mental_model(mcp: FastMCP, memory: MemoryEngine, config: MC
                 }
                 if trigger_refresh_after_consolidation is not None:
                     update_kwargs["trigger"] = {"refresh_after_consolidation": trigger_refresh_after_consolidation}
+                if trigger_refresh_after_time is not None:
+                    trigger_dict = update_kwargs.get("trigger", {})
+                    if trigger_dict.get("refresh_after_consolidation") is not None:
+                        trigger_dict = dict(trigger_dict)
+                        update_kwargs["trigger"] = trigger_dict
+                    else:
+                        trigger_dict = {}
+                    trigger_dict["refresh_after_time"] = trigger_refresh_after_time if trigger_refresh_after_time != "" else None
+                    # Prune None values
+                    trigger_dict = {k: v for k, v in trigger_dict.items() if v is not None}
+                    update_kwargs["trigger"] = trigger_dict if trigger_dict else None
 
                 model = await memory.update_mental_model(**update_kwargs)
                 if model is None:
@@ -1569,6 +1594,7 @@ def _register_update_mental_model(mcp: FastMCP, memory: MemoryEngine, config: MC
             max_tokens: int | None = None,
             tags: list[str] | None = None,
             trigger_refresh_after_consolidation: bool | None = None,
+            trigger_refresh_after_time: str | None = None,
         ) -> dict:
             """
             Update a mental model's metadata.
@@ -1583,6 +1609,7 @@ def _register_update_mental_model(mcp: FastMCP, memory: MemoryEngine, config: MC
                 max_tokens: New max tokens for content generation (256-8192, leave None to keep current)
                 tags: New tags (leave None to keep current)
                 trigger_refresh_after_consolidation: If set, update whether this model auto-refreshes after consolidation
+                trigger_refresh_after_time: If set, update the time-based refresh schedule. Supports duration strings like '1h', '30m', '1d', or cron expressions like '0 9 * * *' (every day at 9am UTC). Pass empty string "" to clear.
             """
             try:
                 target_bank = config.bank_id_resolver()
@@ -1606,6 +1633,16 @@ def _register_update_mental_model(mcp: FastMCP, memory: MemoryEngine, config: MC
                 }
                 if trigger_refresh_after_consolidation is not None:
                     update_kwargs["trigger"] = {"refresh_after_consolidation": trigger_refresh_after_consolidation}
+                if trigger_refresh_after_time is not None:
+                    trigger_dict = update_kwargs.get("trigger", {})
+                    if trigger_dict.get("refresh_after_consolidation") is not None:
+                        trigger_dict = dict(trigger_dict)
+                        update_kwargs["trigger"] = trigger_dict
+                    else:
+                        trigger_dict = {}
+                    trigger_dict["refresh_after_time"] = trigger_refresh_after_time if trigger_refresh_after_time != "" else None
+                    trigger_dict = {k: v for k, v in trigger_dict.items() if v is not None}
+                    update_kwargs["trigger"] = trigger_dict if trigger_dict else None
 
                 model = await memory.update_mental_model(**update_kwargs)
                 if model is None:

@@ -262,6 +262,9 @@ def main():
         # Create the HTTP app for metrics/health
         app = create_worker_app(poller, memory)
 
+        # Attach memory engine to enable time-based mental model refresh scheduling
+        poller.attach_memory(memory)
+
         # Setup signal handlers for graceful shutdown using asyncio
         shutdown_requested = asyncio.Event()
         force_exit = False
