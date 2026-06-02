@@ -2100,7 +2100,9 @@ class MemoryEngine(MemoryEngineInterface):
                     await loop.run_in_executor(None, lambda: asyncio.run(self.embeddings.initialize()))
                 else:
                     await self.embeddings.initialize()
-                logger.info(f"Embeddings initialized: provider={self.embeddings.provider_name}, dim={self.embeddings.dimension}")
+                logger.info(
+                    f"Embeddings initialized: provider={self.embeddings.provider_name}, dim={self.embeddings.dimension}"
+                )
             except Exception as e:
                 logger.warning(f"Embeddings initialization failed: {e}. Continuing without embeddings.")
                 self._embeddings_failed = True

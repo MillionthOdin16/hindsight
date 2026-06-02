@@ -2093,7 +2093,9 @@ class HindsightConfig:
             ),
             worker_http_port=int(os.getenv(ENV_WORKER_HTTP_PORT, str(DEFAULT_WORKER_HTTP_PORT))),
             worker_max_slots=int(os.getenv(ENV_WORKER_MAX_SLOTS, str(DEFAULT_WORKER_MAX_SLOTS))),
-            worker_stale_claim_timeout_minutes=int(os.getenv(ENV_WORKER_STALE_CLAIM_TIMEOUT_MINUTES, str(DEFAULT_WORKER_STALE_CLAIM_TIMEOUT_MINUTES))),
+            worker_stale_claim_timeout_minutes=int(
+                os.getenv(ENV_WORKER_STALE_CLAIM_TIMEOUT_MINUTES, str(DEFAULT_WORKER_STALE_CLAIM_TIMEOUT_MINUTES))
+            ),
             worker_slot_reservations={
                 op_type: int(os.getenv(env_var, str(default)))
                 for op_type, (env_var, default) in WORKER_SLOT_RESERVATION_TYPES.items()
