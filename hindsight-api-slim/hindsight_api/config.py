@@ -757,6 +757,7 @@ ENV_WORKER_HTTP_PORT = "HINDSIGHT_API_WORKER_HTTP_PORT"
 ENV_WORKER_MAX_SLOTS = "HINDSIGHT_API_WORKER_MAX_SLOTS"
 ENV_OPERATION_RETENTION_DAYS = "HINDSIGHT_API_OPERATION_RETENTION_DAYS"
 ENV_OPERATION_CLEANUP_BATCH_SIZE = "HINDSIGHT_API_OPERATION_CLEANUP_BATCH_SIZE"
+ENV_WORKER_STALE_CLAIM_TIMEOUT_MINUTES = "HINDSIGHT_API_WORKER_STALE_CLAIM_TIMEOUT_MINUTES"
 
 
 # Per-operation-type worker slot reservations: op_type -> default reserved count.
@@ -1484,6 +1485,7 @@ DEFAULT_WORKER_MAX_SLOTS = 10  # Total concurrent tasks per worker
 # policy decision rather than something an upgrade silently applies.
 DEFAULT_OPERATION_RETENTION_DAYS = 0
 DEFAULT_OPERATION_CLEANUP_BATCH_SIZE = 1000
+DEFAULT_WORKER_STALE_CLAIM_TIMEOUT_MINUTES = 30  # Reset processing ops older than this (minutes)
 DEFAULT_RETAIN_MAX_CONCURRENT = 4  # Max concurrent retain DB phases (HNSW reads + writes). Limits I/O contention.
 # Sub-batches of ONE document processed at a time. Most of a sub-batch is a store round-trip, so
 # overlapping a few hides that wait. 1 keeps the splitter exactly one slice ahead of the work,
@@ -2816,6 +2818,7 @@ class HindsightConfig:
     worker_task_retry_backoff_seconds: int
     worker_http_port: int
     worker_max_slots: int
+    worker_stale_claim_timeout_minutes: int
     worker_slot_reservations: dict[str, int]
     worker_consolidation_bank_priority: dict[str, int]
     operation_retention_days: int
@@ -4208,6 +4211,7 @@ class HindsightConfig:
             ),
             worker_http_port=int(os.getenv(ENV_WORKER_HTTP_PORT, str(DEFAULT_WORKER_HTTP_PORT))),
             worker_max_slots=int(os.getenv(ENV_WORKER_MAX_SLOTS, str(DEFAULT_WORKER_MAX_SLOTS))),
+            worker_stale_claim_timeout_minutes=int(os.getenv(ENV_WORKER_STALE_CLAIM_TIMEOUT_MINUTES, str(DEFAULT_WORKER_STALE_CLAIM_TIMEOUT_MINUTES))),
             worker_slot_reservations=worker_slot_reservations,
             worker_consolidation_bank_priority=_parse_bank_priority(
                 os.getenv(ENV_WORKER_CONSOLIDATION_BANK_PRIORITY, "")
