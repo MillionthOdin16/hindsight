@@ -666,6 +666,7 @@ class MemoryEngine(MemoryEngineInterface):
             memory_llm_model: Model name. Defaults to HINDSIGHT_API_LLM_MODEL env var.
             memory_llm_base_url: Base URL for the LLM API. Defaults based on provider.
             retain_llm_provider: LLM provider for retain operations. Falls back to memory_llm_provider.
+        self,
             retain_llm_api_key: API key for retain LLM. Falls back to memory_llm_api_key.
             retain_llm_model: Model for retain operations. Falls back to memory_llm_model.
             retain_llm_base_url: Base URL for retain LLM. Falls back to memory_llm_base_url.
@@ -885,6 +886,7 @@ class MemoryEngine(MemoryEngineInterface):
 
         # Initialize cross-encoder reranker (cached for performance)
         self._cross_encoder_reranker = CrossEncoderReranker(cross_encoder=cross_encoder)
+        self._embeddings_failed = False
 
         # Initialize task backend.
         # All backends use BrokerTaskBackend + WorkerPoller for async background execution.
