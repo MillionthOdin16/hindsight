@@ -97,24 +97,34 @@ def apply_combined_scoring(
             # ordering between adjacent candidates without overpowering RRF.
             sr.cross_encoder_score_normalized = 1.0 - (0.9 * new_rank / denom)
 
+    # Precompute loop constants for efficiency
+    sec_per_day = 86400
+    log_div = 10.0
+
     for sr in scored_results:
+        retrieval = sr.retrieval
+
         # Recency: linear decay over 365 days → [0.1, 1.0]; neutral 0.5 if no date.
-        sr.recency = 0.5
-        if sr.retrieval.occurred_start:
-            occurred = sr.retrieval.occurred_start
+        recency = 0.5
+        occurred = retrieval.occurred_start
+        if occurred:
             if occurred.tzinfo is None:
                 occurred = occurred.replace(tzinfo=UTC)
-            days_ago = (now - occurred).total_seconds() / 86400
-            sr.recency = max(0.1, min(1.0, 1.0 - (days_ago / 365)))
+            days_ago = (now - occurred).total_seconds() / sec_per_day
+            recency = max(0.1, min(1.0, 1.0 - (days_ago / 365.0)))
+        sr.recency = recency
 
         # Temporal proximity: meaningful only for temporal queries; neutral otherwise.
-        sr.temporal = sr.retrieval.temporal_proximity if sr.retrieval.temporal_proximity is not None else 0.5
+        temporal = retrieval.temporal_proximity
+        if temporal is None:
+            temporal = 0.5
+        sr.temporal = temporal
 
         # Proof count: log-normalized evidence strength; neutral for non-observations.
-        proof_count = sr.retrieval.proof_count
+        proof_count = retrieval.proof_count
         if proof_count is not None and proof_count >= 1:
             # Clamp to [0, 1] so extreme counts stay within documented ±5% range
-            proof_norm = min(1.0, max(0.0, 0.5 + (math.log(proof_count) / 10.0)))
+            proof_norm = min(1.0, max(0.0, 0.5 + (math.log(proof_count) / log_div)))
         else:
             # Neutral baseline is precisely 0.5, ensuring neutral multiplier (1.0)
             proof_norm = 0.5
@@ -123,8 +133,8 @@ def apply_combined_scoring(
         # RRF is batch-relative (min-max normalised) and redundant after reranking.
         sr.rrf_normalized = 0.0
 
-        recency_boost = 1.0 + recency_alpha * (sr.recency - 0.5)
-        temporal_boost = 1.0 + temporal_alpha * (sr.temporal - 0.5)
+        recency_boost = 1.0 + recency_alpha * (recency - 0.5)
+        temporal_boost = 1.0 + temporal_alpha * (temporal - 0.5)
         proof_count_boost = 1.0 + proof_count_alpha * (proof_norm - 0.5)
         sr.combined_score = sr.cross_encoder_score_normalized * recency_boost * temporal_boost * proof_count_boost
         sr.weight = sr.combined_score

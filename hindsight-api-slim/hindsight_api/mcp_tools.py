@@ -1568,7 +1568,9 @@ def _register_update_mental_model(mcp: FastMCP, memory: MemoryEngine, config: MC
                         update_kwargs["trigger"] = trigger_dict
                     else:
                         trigger_dict = {}
-                    trigger_dict["refresh_after_time"] = trigger_refresh_after_time if trigger_refresh_after_time != "" else None
+                    trigger_dict["refresh_after_time"] = (
+                        trigger_refresh_after_time if trigger_refresh_after_time != "" else None
+                    )
                     # Prune None values
                     trigger_dict = {k: v for k, v in trigger_dict.items() if v is not None}
                     update_kwargs["trigger"] = trigger_dict if trigger_dict else None
@@ -1640,7 +1642,9 @@ def _register_update_mental_model(mcp: FastMCP, memory: MemoryEngine, config: MC
                         update_kwargs["trigger"] = trigger_dict
                     else:
                         trigger_dict = {}
-                    trigger_dict["refresh_after_time"] = trigger_refresh_after_time if trigger_refresh_after_time != "" else None
+                    trigger_dict["refresh_after_time"] = (
+                        trigger_refresh_after_time if trigger_refresh_after_time != "" else None
+                    )
                     trigger_dict = {k: v for k, v in trigger_dict.items() if v is not None}
                     update_kwargs["trigger"] = trigger_dict if trigger_dict else None
 
