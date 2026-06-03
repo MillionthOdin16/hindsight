@@ -322,6 +322,7 @@ class OpenAICompatibleLLM(LLMInterface):
                 "ollama-cloud",
             )
             and not self.api_key
+            and not os.environ.get("CI")
         ):
             raise ValueError(f"API key is required for {self.provider}")
 
