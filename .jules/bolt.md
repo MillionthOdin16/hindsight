@@ -1,3 +1,3 @@
-## 2025-06-06 - Tiktoken `encode_ordinary` Optimization
-**Learning:** `tiktoken` has an `encode_ordinary` method which is specifically designed to skip the special token processing overhead, effectively hardcoding `disallowed_special=()`. In the current codebase, `token_encoding.py` overrides `encode` to use `disallowed_special=()` but passes kwargs and uses the regular `encode` method, which is ~20% slower than `encode_ordinary` because `encode` must still compile and evaluate regex matching against the input to check for special tokens, even when `disallowed_special=()`.
-**Action:** Replace `_SafeEncoding.encode` call with `self._encoding.encode_ordinary` when kwargs are empty (which they are 99% of the time, especially in `count_tokens`), which avoids all special token regex processing entirely while producing the exact same tokens.
+## 2025-06-06 - Tiktoken `encode_ordinary` Mock Issue
+**Learning:** `fake_encoding` mock sets `encode.side_effect` but when testing `encode_ordinary` the mock doesn't handle it, causing it to return a MagicMock object, which has length 0, making the test fail.
+**Action:** Need to patch `encode_ordinary` in the `fake_encoding` mock.
