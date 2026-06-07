@@ -491,6 +491,7 @@ ENV_WORKER_MAX_RETRIES = "HINDSIGHT_API_WORKER_MAX_RETRIES"
 ENV_WORKER_TASK_RETRY_BACKOFF_SECONDS = "HINDSIGHT_API_WORKER_TASK_RETRY_BACKOFF_SECONDS"
 ENV_WORKER_HTTP_PORT = "HINDSIGHT_API_WORKER_HTTP_PORT"
 ENV_WORKER_MAX_SLOTS = "HINDSIGHT_API_WORKER_MAX_SLOTS"
+ENV_WORKER_STALE_CLAIM_TIMEOUT_MINUTES = "HINDSIGHT_API_WORKER_STALE_CLAIM_TIMEOUT_MINUTES"
 
 # Per-operation-type slot reservations. Each entry maps an operation_type
 # (as stored in async_operations.operation_type) to its env var and default.
@@ -890,6 +891,7 @@ DEFAULT_WORKER_MAX_RETRIES = 3  # Max retries before marking task failed
 DEFAULT_WORKER_TASK_RETRY_BACKOFF_SECONDS = 60  # Seconds between retries on transient task failure
 DEFAULT_WORKER_HTTP_PORT = 8889  # HTTP port for worker metrics/health
 DEFAULT_WORKER_MAX_SLOTS = 10  # Total concurrent tasks per worker
+DEFAULT_WORKER_STALE_CLAIM_TIMEOUT_MINUTES = 30  # Reset processing ops older than this (minutes)
 DEFAULT_RETAIN_MAX_CONCURRENT = 4  # Max concurrent retain DB phases (HNSW reads + writes). Limits I/O contention.
 
 # Reflect agent settings
@@ -1503,6 +1505,7 @@ class HindsightConfig:
     worker_task_retry_backoff_seconds: int
     worker_http_port: int
     worker_max_slots: int
+    worker_stale_claim_timeout_minutes: int
     worker_slot_reservations: dict[str, int]
     worker_consolidation_bank_priority: dict[str, int]
     retain_max_concurrent: int
@@ -2375,6 +2378,9 @@ class HindsightConfig:
             ),
             worker_http_port=int(os.getenv(ENV_WORKER_HTTP_PORT, str(DEFAULT_WORKER_HTTP_PORT))),
             worker_max_slots=int(os.getenv(ENV_WORKER_MAX_SLOTS, str(DEFAULT_WORKER_MAX_SLOTS))),
+            worker_stale_claim_timeout_minutes=int(
+                os.getenv(ENV_WORKER_STALE_CLAIM_TIMEOUT_MINUTES, str(DEFAULT_WORKER_STALE_CLAIM_TIMEOUT_MINUTES))
+            ),
             worker_slot_reservations={
                 op_type: int(os.getenv(env_var, str(default)))
                 for op_type, (env_var, default) in WORKER_SLOT_RESERVATION_TYPES.items()

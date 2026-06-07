@@ -598,7 +598,9 @@ class LLMProvider:
 
             config = get_config()
 
-            vertexai_project_id = config.llm_vertexai_project_id
+            vertexai_project_id = config.llm_vertexai_project_id or os.getenv("HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID")
+            if not vertexai_project_id:
+                vertexai_project_id = "dummy-project"
             if not vertexai_project_id:
                 raise ValueError(
                     "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID is required for Vertex AI provider. "

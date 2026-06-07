@@ -32,6 +32,7 @@ dependencies = [
     "PyJWT[crypto]>=2.8.0",
     "fastmcp>=3.2.0", # SSRF/path traversal, OAuth confused deputy, command injection fixes
     "python-dateutil>=2.8.0",
+    "croniter>=4.4.0",
     # opentelemetry-exporter-prometheus 0.62b1 calls
     # MetricReader.__init__(otel_component_type=…), a kwarg added in
     # opentelemetry-sdk 1.41.0 (open-telemetry/opentelemetry-python#4970).
