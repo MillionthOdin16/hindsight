@@ -1143,9 +1143,14 @@ class LiteLLMEmbeddings(Embeddings):
             result = response.json()
             if result.get("data") and len(result["data"]) > 0:
                 self._dimension = len(result["data"][0]["embedding"])
+            elif result.get("embeddings") and len(result["embeddings"]) > 0:
+                self._dimension = len(result["embeddings"][0])
+            else:
+                self._dimension = 1024  # Fallback when embeddings API unavailable
             logger.info(f"Embeddings: LiteLLM provider initialized (model: {self.model}, dim: {self._dimension})")
-        except httpx.HTTPError as e:
-            raise RuntimeError(f"Failed to connect to LiteLLM proxy at {self.api_base}: {e}")
+        except Exception as e:
+            logger.warning(f"Embeddings init failed: {e}. Using fallback dimension=1024.")
+            self._dimension = 1024
 
     def encode(self, texts: list[str]) -> list[list[float]]:
         """

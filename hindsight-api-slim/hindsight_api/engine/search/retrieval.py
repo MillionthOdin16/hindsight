@@ -733,10 +733,13 @@ async def retrieve_all_fact_types_parallel(
 
     # Step 1: Extract temporal constraint first (CPU work, no DB)
     # Do this before DB queries so we know if we need temporal retrieval
+    # Optimization: Dateparser is CPU-heavy and blocks the event loop; run in thread
     temporal_extraction_start = time.time()
     from .temporal_extraction import extract_temporal_constraint
 
-    temporal_constraint = extract_temporal_constraint(query_text, reference_date=question_date, analyzer=query_analyzer)
+    temporal_constraint = await asyncio.to_thread(
+        extract_temporal_constraint, query_text, reference_date=question_date, analyzer=query_analyzer
+    )
     temporal_extraction_time = time.time() - temporal_extraction_start
     timings["temporal_extraction"] = temporal_extraction_time
 
