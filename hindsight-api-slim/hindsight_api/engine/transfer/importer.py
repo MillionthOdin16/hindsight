@@ -292,6 +292,7 @@ async def _restore_rows(conn: Any, table: str, rows: list[dict]) -> int:
         )
     }
     inserted = 0
+    insert_queries = {}
     for row in rows:
         cols = [c for c in row if c in col_types]
         placeholders: list[str] = []
@@ -315,12 +316,19 @@ async def _restore_rows(conn: Any, table: str, rows: list[dict]) -> int:
                     value = uuid.UUID(value)
             placeholders.append(f"${position}")
             values.append(value)
-        col_list = ", ".join(f'"{c}"' for c in cols)
-        await conn.execute(
-            f"INSERT INTO {fq_table(table)} ({col_list}) VALUES ({', '.join(placeholders)}) ON CONFLICT DO NOTHING",
-            *values,
-        )
+
+        # Group by identical columns structure to allow batch insert
+        col_key = tuple(cols)
+        if col_key not in insert_queries:
+            col_list = ", ".join(f'"{c}"' for c in cols)
+            query = f"INSERT INTO {fq_table(table)} ({col_list}) VALUES ({', '.join(placeholders)}) ON CONFLICT DO NOTHING"
+            insert_queries[col_key] = {"query": query, "values": []}
+
+        insert_queries[col_key]["values"].append(tuple(values))
         inserted += 1
+
+    for batch_data in insert_queries.values():
+        await conn.executemany(batch_data["query"], batch_data["values"])
     return inserted
 
 

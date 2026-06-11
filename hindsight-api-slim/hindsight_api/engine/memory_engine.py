@@ -11212,6 +11212,8 @@ class MemoryEngine(MemoryEngineInterface):
                     "pending",  # Will be updated by status aggregation
                 )
 
+                # Batch inserting child operations to reduce database round-trips
+                child_insert_records = []
                 for i, sub_batch in enumerate(sub_batches, 1):
                     if len(sub_batches) > 1:
                         sub_batch_tokens = sum(count_tokens(item.get("content", "")) for item in sub_batch)
@@ -11244,20 +11246,25 @@ class MemoryEngine(MemoryEngineInterface):
                         "bank_id": bank_id,
                         **task_payload,
                     }
+                    deferred_child_payloads.append(full_payload)
 
-                    await conn.execute(
-                        f"""
-                        INSERT INTO {fq_table("async_operations")} (operation_id, bank_id, operation_type, result_metadata, status, task_payload)
-                        VALUES ($1, $2, $3, $4, $5, $6::jsonb)
-                        """,
+                    child_insert_records.append((
                         child_operation_id,
                         bank_id,
                         "retain",
                         json.dumps(child_metadata.to_dict(), default=_json_default),
                         "pending",
                         json.dumps(full_payload, default=_json_default),
+                    ))
+
+                if child_insert_records:
+                    await conn.executemany(
+                        f"""
+                        INSERT INTO {fq_table("async_operations")} (operation_id, bank_id, operation_type, result_metadata, status, task_payload)
+                        VALUES ($1, $2, $3, $4, $5, $6::jsonb)
+                        """,
+                        child_insert_records,
                     )
-                    deferred_child_payloads.append(full_payload)
 
         # Best-effort default-template hook runs after the bank-create commits.
         if created:
