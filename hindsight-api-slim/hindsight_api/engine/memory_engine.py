@@ -10373,18 +10373,16 @@ class MemoryEngine(MemoryEngineInterface):
 
             where_clause = " AND ".join(where_conditions)
 
-            # Get total count (with filter)
-            total_row = await conn.fetchrow(
-                f"SELECT COUNT(*) as total FROM {fq_table('async_operations')} WHERE {where_clause}",
-                *params,
-            )
-            total = total_row["total"] if total_row else 0
-
-            # Get operations with pagination (include result_metadata to check for parent operations)
+            # Get operations with pagination and total count in one query
+            # Include result_metadata to check for parent operations
+            # We use COUNT(*) OVER() to avoid a separate query for the total count.
+            # If the offset exceeds the total number of operations, this query will
+            # return 0 rows, missing the count. We fallback to an explicit count query in that case.
             operations = await conn.fetch(
                 f"""
                 SELECT operation_id, operation_type, created_at, updated_at, status, error_message,
-                       result_metadata, retry_count, next_retry_at
+                       result_metadata, retry_count, next_retry_at,
+                       COUNT(*) OVER() as full_count
                 FROM {fq_table("async_operations")}
                 WHERE {where_clause}
                 ORDER BY created_at DESC
@@ -10394,6 +10392,16 @@ class MemoryEngine(MemoryEngineInterface):
                 limit,
                 offset,
             )
+
+            if operations:
+                total = operations[0]["full_count"]
+            else:
+                # Fallback: Get total count explicitly if pagination offset returned no rows
+                total_row = await conn.fetchrow(
+                    f"SELECT COUNT(*) as total FROM {fq_table('async_operations')} WHERE {where_clause}",
+                    *params,
+                )
+                total = total_row["total"] if total_row else 0
 
             # Build operation list using status from database
             # Parent operations have their status updated when all children complete/fail
