@@ -28,6 +28,7 @@ logger = logging.getLogger(__name__)
 
 _NON_WORD_RE = re.compile(r"[^\w\s]")
 
+
 def tokenize_query(query_text: str) -> list[str]:
     """Normalize query text and split into BM25 tokens.
 

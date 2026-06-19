@@ -596,17 +596,24 @@ class LLMProvider:
         if self.provider == "vertexai":
             from ..config import get_config
 
-            config = get_config()
+            try:
+                config = get_config()
+                vertexai_project_id = config.llm_vertexai_project_id
+                vertexai_region = config.llm_vertexai_region or "us-central1"
+                service_account_key = config.llm_vertexai_service_account_key
+            except Exception:
+                # get_config() may fail in tests where config is not initialized
+                import os
+                from ..config import ENV_LLM_VERTEXAI_PROJECT_ID, ENV_LLM_VERTEXAI_REGION, ENV_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY
+                vertexai_project_id = os.environ.get(ENV_LLM_VERTEXAI_PROJECT_ID)
+                vertexai_region = os.environ.get(ENV_LLM_VERTEXAI_REGION, "us-central1")
+                service_account_key = os.environ.get(ENV_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY)
 
-            vertexai_project_id = config.llm_vertexai_project_id
             if not vertexai_project_id:
                 raise ValueError(
                     "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID is required for Vertex AI provider. "
                     "Set it to your GCP project ID."
                 )
-
-            vertexai_region = config.llm_vertexai_region or "us-central1"
-            service_account_key = config.llm_vertexai_service_account_key
 
             # Load explicit service account credentials if provided
             if service_account_key:
