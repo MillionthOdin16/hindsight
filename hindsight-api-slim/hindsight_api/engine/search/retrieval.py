@@ -26,6 +26,8 @@ from .types import GraphRetrievalTimings, RetrievalResult
 
 logger = logging.getLogger(__name__)
 
+_NON_WORD_RE = re.compile(r"[^\w\s]")
+
 
 def tokenize_query(query_text: str) -> list[str]:
     """Normalize query text and split into BM25 tokens.
@@ -33,7 +35,7 @@ def tokenize_query(query_text: str) -> list[str]:
     Strips punctuation, lowercases, and splits on whitespace.
     Returns an empty list when the query contains no word characters.
     """
-    return re.sub(r"[^\w\s]", " ", query_text.lower()).split()
+    return _NON_WORD_RE.sub(" ", query_text.lower()).split()
 
 
 @dataclass

@@ -23,8 +23,8 @@ from hindsight_api.engine.search.think_utils import reflect
 
 pytestmark = pytest.mark.hs_llm_mat
 
-_PROVIDER = os.environ.get("HINDSIGHT_API_LLM_PROVIDER", "mock")
-_MODEL = os.environ.get("HINDSIGHT_API_LLM_MODEL", "mock")
+_PROVIDER = os.environ.get("HINDSIGHT_API_LLM_PROVIDER", "")
+_MODEL = os.environ.get("HINDSIGHT_API_LLM_MODEL", "")
 
 def _get_api_key() -> str:
     """Get API key from HINDSIGHT_API_LLM_API_KEY (CI) or provider-specific env var."""
@@ -99,9 +99,9 @@ async def test_llm_api_methods():
         response_format=TestResponse,
         max_completion_tokens=100,
     )
-    assert isinstance(structured, TestResponse) or (_PROVIDER == "mock" and isinstance(structured, dict)), f"Expected TestResponse, got {type(structured)}"
-    assert hasattr(structured, "answer") or (_PROVIDER == "mock" and "mock" in structured), "Structured output missing \'answer\'"
-    assert hasattr(structured, "confidence") or (_PROVIDER == "mock" and "mock" in structured), "Structured output missing \'confidence\'"
+    assert isinstance(structured, TestResponse), f"Expected TestResponse, got {type(structured)}"
+    assert structured.answer, "Structured output missing 'answer'"
+    assert structured.confidence, "Structured output missing 'confidence'"
 
     # Test 4: call_with_tools() (tool calling)
     tools = [
@@ -133,12 +133,11 @@ async def test_llm_api_methods():
 
     assert result is not None, "call_with_tools() returned None"
     assert hasattr(result, "tool_calls"), "Result missing 'tool_calls' attribute"
-    assert len(result.tool_calls) > 0 or _PROVIDER == "mock", f"Expected at least 1 tool call, got {len(result.tool_calls)}"
+    assert len(result.tool_calls) > 0, f"Expected at least 1 tool call, got {len(result.tool_calls)}"
 
-    if _PROVIDER != "mock":
-        tool_call = result.tool_calls[0]
-
-
+    tool_call = result.tool_calls[0]
+    assert tool_call.name == "get_weather", f"Expected 'get_weather', got '{tool_call.name}'"
+    assert "location" in tool_call.arguments, "Tool call arguments missing 'location'"
 
 
 @pytest.mark.asyncio
