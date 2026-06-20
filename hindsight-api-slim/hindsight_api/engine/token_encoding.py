@@ -27,6 +27,10 @@ class _SafeEncoding:
         kwargs.setdefault("disallowed_special", ())
         return self._encoding.encode(text, **kwargs)
 
+    def encode_ordinary(self, text: str) -> list[int]:
+        # Much faster alternative to encode() when we don't care about special tokens at all.
+        return self._encoding.encode_ordinary(text)
+
     def decode(self, tokens: list[int]) -> str:
         return self._encoding.decode(tokens)
 
@@ -43,4 +47,5 @@ def get_token_encoding() -> _SafeEncoding:
 
 def count_tokens(text: str) -> int:
     """Count cl100k_base tokens in ``text`` (tolerant of special-token literals)."""
-    return len(get_token_encoding().encode(text))
+    # Use encode_ordinary which completely ignores special tokens and is much faster
+    return len(get_token_encoding().encode_ordinary(text))
