@@ -679,20 +679,21 @@ def compute_semantic_links_within_batch(
     links = []
     new_embeddings_matrix = np.array(embeddings)
 
-    # Compute similarities between all pairs at once (vectorized loop)
-    sim_matrix = np.dot(new_embeddings_matrix, new_embeddings_matrix.T)
-    # Ignore self-similarities
-    np.fill_diagonal(sim_matrix, -np.inf)
-
     for i, unit_id in enumerate(unit_ids):
-        similarities = sim_matrix[i]
+        other_indices = [j for j in range(len(unit_ids)) if j != i]
+        if not other_indices:
+            continue
+
+        other_embeddings = new_embeddings_matrix[other_indices]
+        similarities = np.dot(other_embeddings, new_embeddings_matrix[i])
 
         above_threshold = np.where(similarities >= threshold)[0]
         if len(above_threshold) > 0:
-            sorted_indices = above_threshold[np.argsort(-similarities[above_threshold])][:top_k]
-            for other_idx in sorted_indices:
+            sorted_local_indices = above_threshold[np.argsort(-similarities[above_threshold])][:top_k]
+            for local_idx in sorted_local_indices:
+                other_idx = other_indices[local_idx]
                 other_id = unit_ids[other_idx]
-                similarity = float(min(1.0, max(0.0, similarities[other_idx])))
+                similarity = float(min(1.0, max(0.0, similarities[local_idx])))
                 links.append((unit_id, other_id, "semantic", similarity, None))
 
     return links
