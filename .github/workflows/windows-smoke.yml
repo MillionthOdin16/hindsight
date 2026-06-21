@@ -38,8 +38,9 @@ jobs:
         shell: bash
         run: |
           printf '%s' '${{ secrets.GCP_VERTEXAI_CREDENTIALS }}' > gcp-credentials.json
-          PROJECT_ID=$(jq -r '.project_id' gcp-credentials.json)
-          echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$PROJECT_ID" >> "$GITHUB_ENV"
+          if [ ! -s gcp-credentials.json ]; then echo '{}' > gcp-credentials.json; fi
+          PROJECT_ID=$(jq -r '.project_id // ""' gcp-credentials.json || echo '')
+          echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=${PROJECT_ID:-dummy-project}" >> "$GITHUB_ENV"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
