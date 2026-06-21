@@ -959,8 +959,8 @@ jobs:
     - name: Setup GCP credentials
       run: |
         printf '%s' '${{ secrets.GCP_VERTEXAI_CREDENTIALS }}' > /tmp/gcp-credentials.json
-        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json)
-        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$PROJECT_ID" >> $GITHUB_ENV
+        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json || echo '')
+        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=${PROJECT_ID:-dummy-project}" >> $GITHUB_ENV
 
     - name: Install Rust
       uses: dtolnay/rust-toolchain@stable
@@ -1182,8 +1182,8 @@ jobs:
       if: matrix.variant == 'slim'
       run: |
         printf '%s' '${{ secrets.GCP_VERTEXAI_CREDENTIALS }}' > /tmp/gcp-credentials.json
-        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json)
-        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$PROJECT_ID" >> $GITHUB_ENV
+        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json || echo '')
+        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=${PROJECT_ID:-dummy-project}" >> $GITHUB_ENV
 
     - name: Smoke test - verify container starts
       if: matrix.variant == 'slim'
@@ -1237,8 +1237,8 @@ jobs:
     - name: Setup GCP credentials
       run: |
         printf '%s' '${{ secrets.GCP_VERTEXAI_CREDENTIALS }}' > /tmp/gcp-credentials.json
-        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json)
-        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$PROJECT_ID" >> $GITHUB_ENV
+        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json || echo '')
+        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=${PROJECT_ID:-dummy-project}" >> $GITHUB_ENV
 
     - name: Install uv
       uses: astral-sh/setup-uv@v7
@@ -1322,8 +1322,8 @@ jobs:
     - name: Setup GCP credentials
       run: |
         printf '%s' '${{ secrets.GCP_VERTEXAI_CREDENTIALS }}' > /tmp/gcp-credentials.json
-        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json)
-        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$PROJECT_ID" >> $GITHUB_ENV
+        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json || echo '')
+        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=${PROJECT_ID:-dummy-project}" >> $GITHUB_ENV
 
     - name: Install uv
       uses: astral-sh/setup-uv@v7
@@ -1415,8 +1415,8 @@ jobs:
     - name: Setup GCP credentials
       run: |
         printf '%s' '${{ secrets.GCP_VERTEXAI_CREDENTIALS }}' > /tmp/gcp-credentials.json
-        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json)
-        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$PROJECT_ID" >> $GITHUB_ENV
+        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json || echo '')
+        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=${PROJECT_ID:-dummy-project}" >> $GITHUB_ENV
 
     - name: Install uv
       uses: astral-sh/setup-uv@v7
@@ -1541,8 +1541,8 @@ jobs:
     - name: Setup GCP credentials
       run: |
         printf '%s' '${{ secrets.GCP_VERTEXAI_CREDENTIALS }}' > /tmp/gcp-credentials.json
-        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json)
-        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$PROJECT_ID" >> $GITHUB_ENV
+        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json || echo '')
+        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=${PROJECT_ID:-dummy-project}" >> $GITHUB_ENV
 
     - name: Install uv
       uses: astral-sh/setup-uv@v7
@@ -1615,8 +1615,8 @@ jobs:
     - name: Setup GCP credentials
       run: |
         printf '%s' '${{ secrets.GCP_VERTEXAI_CREDENTIALS }}' > /tmp/gcp-credentials.json
-        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json)
-        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$PROJECT_ID" >> $GITHUB_ENV
+        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json || echo '')
+        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=${PROJECT_ID:-dummy-project}" >> $GITHUB_ENV
 
     - name: Install uv
       uses: astral-sh/setup-uv@v7
@@ -1727,8 +1727,8 @@ jobs:
     - name: Setup GCP credentials
       run: |
         printf '%s' '${{ secrets.GCP_VERTEXAI_CREDENTIALS }}' > /tmp/gcp-credentials.json
-        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json)
-        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$PROJECT_ID" >> $GITHUB_ENV
+        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json || echo '')
+        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=${PROJECT_ID:-dummy-project}" >> $GITHUB_ENV
 
     - name: Install uv
       uses: astral-sh/setup-uv@v7
@@ -1898,8 +1898,8 @@ jobs:
     - name: Setup GCP credentials
       run: |
         printf '%s' '${{ secrets.GCP_VERTEXAI_CREDENTIALS }}' > /tmp/gcp-credentials.json
-        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json)
-        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$PROJECT_ID" >> $GITHUB_ENV
+        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json || echo '')
+        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=${PROJECT_ID:-dummy-project}" >> $GITHUB_ENV
 
     - name: Install uv
       uses: astral-sh/setup-uv@v7
@@ -2058,8 +2058,8 @@ jobs:
     - name: Setup GCP credentials
       run: |
         printf '%s' '${{ secrets.GCP_VERTEXAI_CREDENTIALS }}' > /tmp/gcp-credentials.json
-        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json)
-        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$PROJECT_ID" >> $GITHUB_ENV
+        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json || echo '')
+        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=${PROJECT_ID:-dummy-project}" >> $GITHUB_ENV
 
     - name: Install uv
       uses: astral-sh/setup-uv@v7
@@ -2176,8 +2176,8 @@ jobs:
     - name: Setup GCP credentials
       run: |
         printf '%s' '${{ secrets.GCP_VERTEXAI_CREDENTIALS }}' > /tmp/gcp-credentials.json
-        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json)
-        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$PROJECT_ID" >> $GITHUB_ENV
+        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json || echo '')
+        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=${PROJECT_ID:-dummy-project}" >> $GITHUB_ENV
 
     - name: Install uv
       uses: astral-sh/setup-uv@v7
@@ -2332,8 +2332,8 @@ jobs:
     - name: Setup GCP credentials
       run: |
         printf '%s' '${{ secrets.GCP_VERTEXAI_CREDENTIALS }}' > /tmp/gcp-credentials.json
-        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json)
-        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$PROJECT_ID" >> $GITHUB_ENV
+        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json || echo '')
+        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=${PROJECT_ID:-dummy-project}" >> $GITHUB_ENV
 
     - name: Install uv
       uses: astral-sh/setup-uv@v7
@@ -2448,8 +2448,8 @@ jobs:
     - name: Setup GCP credentials
       run: |
         printf '%s' '${{ secrets.GCP_VERTEXAI_CREDENTIALS }}' > /tmp/gcp-credentials.json
-        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json)
-        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$PROJECT_ID" >> $GITHUB_ENV
+        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json || echo '')
+        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=${PROJECT_ID:-dummy-project}" >> $GITHUB_ENV
 
     - name: Install uv
       uses: astral-sh/setup-uv@v7
@@ -2563,8 +2563,8 @@ jobs:
     - name: Setup GCP credentials
       run: |
         printf '%s' '${{ secrets.GCP_VERTEXAI_CREDENTIALS }}' > /tmp/gcp-credentials.json
-        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json)
-        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$PROJECT_ID" >> $GITHUB_ENV
+        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json || echo '')
+        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=${PROJECT_ID:-dummy-project}" >> $GITHUB_ENV
 
     - name: Install uv
       uses: astral-sh/setup-uv@v7
@@ -2694,8 +2694,8 @@ jobs:
     - name: Setup GCP credentials
       run: |
         printf '%s' '${{ secrets.GCP_VERTEXAI_CREDENTIALS }}' > /tmp/gcp-credentials.json
-        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json)
-        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$PROJECT_ID" >> $GITHUB_ENV
+        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json || echo '')
+        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=${PROJECT_ID:-dummy-project}" >> $GITHUB_ENV
 
     - name: Install uv
       uses: astral-sh/setup-uv@v7
@@ -3362,8 +3362,8 @@ jobs:
     - name: Setup GCP credentials
       run: |
         printf '%s' '${{ secrets.GCP_VERTEXAI_CREDENTIALS }}' > /tmp/gcp-credentials.json
-        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json)
-        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$PROJECT_ID" >> $GITHUB_ENV
+        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json || echo '')
+        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=${PROJECT_ID:-dummy-project}" >> $GITHUB_ENV
 
     - name: Install uv
       uses: astral-sh/setup-uv@v7
@@ -3430,8 +3430,8 @@ jobs:
     - name: Setup GCP credentials
       run: |
         printf '%s' '${{ secrets.GCP_VERTEXAI_CREDENTIALS }}' > /tmp/gcp-credentials.json
-        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json)
-        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$PROJECT_ID" >> $GITHUB_ENV
+        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json || echo '')
+        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=${PROJECT_ID:-dummy-project}" >> $GITHUB_ENV
 
     - name: Install uv
       uses: astral-sh/setup-uv@v7
@@ -3507,8 +3507,8 @@ jobs:
       shell: bash
       run: |
         printf '%s' '${{ secrets.GCP_VERTEXAI_CREDENTIALS }}' > gcp-credentials.json
-        PROJECT_ID=$(jq -r '.project_id' gcp-credentials.json)
-        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$PROJECT_ID" >> "$GITHUB_ENV"
+        PROJECT_ID=$(jq -r '.project_id' gcp-credentials.json || echo '')
+        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=${PROJECT_ID:-dummy-project}" >> "$GITHUB_ENV"
 
     - name: Install uv
       uses: astral-sh/setup-uv@v7
@@ -3680,8 +3680,8 @@ jobs:
     - name: Setup GCP credentials
       run: |
         printf '%s' '${{ secrets.GCP_VERTEXAI_CREDENTIALS }}' > /tmp/gcp-credentials.json
-        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json)
-        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$PROJECT_ID" >> $GITHUB_ENV
+        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json || echo '')
+        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=${PROJECT_ID:-dummy-project}" >> $GITHUB_ENV
 
     - name: Install uv
       uses: astral-sh/setup-uv@v7
@@ -3777,8 +3777,8 @@ jobs:
     - name: Setup GCP credentials
       run: |
         printf '%s' '${{ secrets.GCP_VERTEXAI_CREDENTIALS }}' > /tmp/gcp-credentials.json
-        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json)
-        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$PROJECT_ID" >> $GITHUB_ENV
+        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json || echo '')
+        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=${PROJECT_ID:-dummy-project}" >> $GITHUB_ENV
 
     - name: Install Rust
       if: matrix.language == 'cli'
@@ -3921,8 +3921,8 @@ jobs:
     - name: Setup GCP credentials
       run: |
         printf '%s' '${{ secrets.GCP_VERTEXAI_CREDENTIALS }}' > /tmp/gcp-credentials.json
-        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json)
-        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$PROJECT_ID" >> $GITHUB_ENV
+        PROJECT_ID=$(jq -r '.project_id' /tmp/gcp-credentials.json || echo '')
+        echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=${PROJECT_ID:-dummy-project}" >> $GITHUB_ENV
 
     - name: Fetch tags
       run: git fetch --tags
