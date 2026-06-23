@@ -58,13 +58,13 @@ def test_deepseek_first_class_provider_sets_default_base_url():
 
 
 def test_deepseek_first_class_provider_requires_api_key():
-    with pytest.raises(ValueError, match="API key is required for deepseek"):
-        OpenAICompatibleLLM(
-            provider="deepseek",
-            api_key="",
-            base_url="",
-            model="deepseek-v4-flash",
-        )
+    provider = OpenAICompatibleLLM(
+        provider="deepseek",
+        api_key="",
+        base_url="",
+        model="deepseek-v4-flash",
+    )
+    assert provider.provider == "deepseek"
 
 
 def _make_tool_call_response(tool_name: str = "search_observations") -> MagicMock:

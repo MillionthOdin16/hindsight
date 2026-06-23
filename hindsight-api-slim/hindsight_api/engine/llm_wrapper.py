@@ -228,10 +228,10 @@ _PROVIDERS_WITHOUT_API_KEY = frozenset(
         "claude-code",
         "mock",
         "none",
-        "vertexai",
-        "litellm",
+        "vertexai",  # VertexAI uses ADC or SA JSON, not an API key string
+        "litellm",  # Handled externally
         "litellmrouter",
-        "bedrock",
+        "bedrock",  # Uses boto3 credentials
     }
 )
 

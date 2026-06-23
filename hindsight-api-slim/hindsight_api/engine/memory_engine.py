@@ -739,7 +739,12 @@ class MemoryEngine(MemoryEngineInterface):
             self._skip_llm_verification = True
         memory_llm_api_key = memory_llm_api_key or config.llm_api_key
         if not memory_llm_api_key and requires_api_key(memory_llm_provider):
-            raise ValueError("LLM API key is required. Set HINDSIGHT_API_LLM_API_KEY environment variable.")
+            import logging
+
+            logger = logging.getLogger(__name__)
+            logger.warning(
+                "LLM API key is missing. Set HINDSIGHT_API_LLM_API_KEY environment variable. Server will start but operations may fail."
+            )
         memory_llm_model = memory_llm_model or config.llm_model
         memory_llm_base_url = memory_llm_base_url or config.get_llm_base_url() or None
         # Track pg0 instance (if used)
