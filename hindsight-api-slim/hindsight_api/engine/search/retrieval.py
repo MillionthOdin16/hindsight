@@ -794,6 +794,19 @@ async def retrieve_all_fact_types_parallel(
         ft: str,
     ) -> tuple[str, list[RetrievalResult], float, GraphRetrievalTimings | None]:
         graph_start = time.time()
+
+        # Prepare seeds from earlier combined queries
+        # The semantic and temporal combined queries already did the expensive HNSW searches
+        # Reusing these results prevents the graph retriever from doing duplicate vector searches
+        semantic_seeds = None
+        if ft in semantic_bm25_results:
+            semantic, _ = semantic_bm25_results[ft]
+            # Match the default graph retriever seed thresholds (limit 20, threshold 0.3)
+            # This is an optimization that avoids N expensive HNSW queries per fact_type
+            semantic_seeds = [s for s in semantic if (s.similarity or 0) >= 0.3][:20]
+
+        temporal_seeds = temporal_results_by_ft.get(ft)
+
         results, graph_timing = await retriever.retrieve(
             pool=pool,
             query_embedding_str=query_embedding_str,
@@ -801,8 +814,8 @@ async def retrieve_all_fact_types_parallel(
             fact_type=ft,
             budget=thinking_budget,
             query_text=query_text,
-            semantic_seeds=None,
-            temporal_seeds=None,
+            semantic_seeds=semantic_seeds,
+            temporal_seeds=temporal_seeds,
             tags=tags,
             tags_match=tags_match,
             tag_groups=tag_groups,
