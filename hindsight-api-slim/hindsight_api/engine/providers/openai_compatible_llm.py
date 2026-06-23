@@ -324,6 +324,10 @@ class OpenAICompatibleLLM(LLMInterface):
             self.api_key = "local"
 
         # Validate API key for cloud providers
+        import logging
+
+        logger = logging.getLogger(__name__)
+
         if (
             self.provider
             in (
@@ -338,7 +342,10 @@ class OpenAICompatibleLLM(LLMInterface):
             )
             and not self.api_key
         ):
-            raise ValueError(f"API key is required for {self.provider}")
+            logger.warning(
+                f"API key is missing or empty for {self.provider}. "
+                "The provider will attempt to use default credentials or fail during execution."
+            )
 
         # Service tier configuration (from config, not env vars)
         self.groq_service_tier = groq_service_tier

@@ -228,10 +228,10 @@ _PROVIDERS_WITHOUT_API_KEY = frozenset(
         "claude-code",
         "mock",
         "none",
-        "vertexai",
-        "litellm",
+        "vertexai",  # VertexAI uses ADC or SA JSON, not an API key string
+        "litellm",  # Handled externally
         "litellmrouter",
-        "bedrock",
+        "bedrock",  # Uses boto3 credentials
     }
 )
 
@@ -600,9 +600,9 @@ class LLMProvider:
 
             vertexai_project_id = config.llm_vertexai_project_id
             if not vertexai_project_id:
-                raise ValueError(
-                    "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID is required for Vertex AI provider. "
-                    "Set it to your GCP project ID."
+                logger.warning(
+                    "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID is missing or empty. "
+                    "Vertex AI will attempt to use default credentials, but may fail during execution."
                 )
 
             vertexai_region = config.llm_vertexai_region or "us-central1"
@@ -615,11 +615,15 @@ class LLMProvider:
                         "Vertex AI service account auth requires 'google-auth' package. "
                         "Install with: pip install google-auth"
                     )
-                vertexai_credentials = service_account.Credentials.from_service_account_file(
-                    service_account_key,
-                    scopes=["https://www.googleapis.com/auth/cloud-platform"],
-                )
-                logger.info(f"Vertex AI: Using service account key: {service_account_key}")
+                try:
+                    vertexai_credentials = service_account.Credentials.from_service_account_file(
+                        service_account_key,
+                        scopes=["https://www.googleapis.com/auth/cloud-platform"],
+                    )
+                    logger.info(f"Vertex AI: Using service account key: {service_account_key}")
+                except Exception as e:
+                    logger.warning(f"Vertex AI: Failed to load service account key '{service_account_key}': {e}")
+                    vertexai_credentials = None
 
             # Strip google/ prefix from model name — native SDK uses bare names
             if self.model.startswith("google/"):

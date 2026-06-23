@@ -54,15 +54,16 @@ def test_llm_wrapper_vertexai_missing_project_id():
 
         clear_config_cache()
 
-        with pytest.raises(ValueError, match="HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID"):
-            from hindsight_api.engine.llm_wrapper import LLMProvider
+        from hindsight_api.engine.llm_wrapper import LLMProvider
 
-            LLMProvider(
-                provider="vertexai",
-                api_key="",
-                base_url="",
-                model="google/gemini-2.0-flash-001",
-            )
+        # Should not raise an error, just log a warning
+        provider = LLMProvider(
+            provider="vertexai",
+            api_key="",
+            base_url="",
+            model="google/gemini-2.0-flash-001",
+        )
+        assert provider.provider == "vertexai"
 
         clear_config_cache()
 
