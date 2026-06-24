@@ -599,7 +599,7 @@ class LLMProvider:
             config = get_config()
 
             vertexai_project_id = config.llm_vertexai_project_id
-            if not vertexai_project_id:
+            if not vertexai_project_id and not config.skip_llm_verification:
                 raise ValueError(
                     "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID is required for Vertex AI provider. "
                     "Set it to your GCP project ID."
@@ -607,6 +607,7 @@ class LLMProvider:
 
             vertexai_region = config.llm_vertexai_region or "us-central1"
             service_account_key = config.llm_vertexai_service_account_key
+            vertexai_credentials = None
 
             # Load explicit service account credentials if provided
             if service_account_key:
@@ -615,11 +616,16 @@ class LLMProvider:
                         "Vertex AI service account auth requires 'google-auth' package. "
                         "Install with: pip install google-auth"
                     )
-                vertexai_credentials = service_account.Credentials.from_service_account_file(
-                    service_account_key,
-                    scopes=["https://www.googleapis.com/auth/cloud-platform"],
-                )
-                logger.info(f"Vertex AI: Using service account key: {service_account_key}")
+                try:
+                    vertexai_credentials = service_account.Credentials.from_service_account_file(
+                        service_account_key,
+                        scopes=["https://www.googleapis.com/auth/cloud-platform"],
+                    )
+                    logger.info(f"Vertex AI: Using service account key: {service_account_key}")
+                except Exception as e:
+                    if not config.skip_llm_verification:
+                        raise ValueError(f"Failed to load Vertex AI service account key: {e}")
+                    logger.warning(f"Failed to load Vertex AI service account key: {e}")
 
             # Strip google/ prefix from model name — native SDK uses bare names
             if self.model.startswith("google/"):

@@ -108,10 +108,13 @@ class GeminiLLM(LLMInterface):
         credentials = kwargs.get("vertexai_credentials")  # Pre-loaded credentials object
 
         if not project_id:
-            raise ValueError(
-                "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID is required for Vertex AI provider. "
-                "Set it to your GCP project ID."
-            )
+            from ...config import get_config
+
+            if not get_config().skip_llm_verification:
+                raise ValueError(
+                    "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID is required for Vertex AI provider. "
+                    "Set it to your GCP project ID."
+                )
 
         auth_method = "ADC"
 
@@ -125,10 +128,18 @@ class GeminiLLM(LLMInterface):
                     "Vertex AI service account auth requires 'google-auth' package. "
                     "Install with: pip install google-auth"
                 )
-            credentials = service_account.Credentials.from_service_account_file(
-                service_account_key,
-                scopes=["https://www.googleapis.com/auth/cloud-platform"],
-            )
+            try:
+                credentials = service_account.Credentials.from_service_account_file(
+                    service_account_key,
+                    scopes=["https://www.googleapis.com/auth/cloud-platform"],
+                )
+            except Exception as e:
+                from ...config import get_config
+
+                if not get_config().skip_llm_verification:
+                    raise ValueError(f"Failed to load Vertex AI service account key: {e}")
+                logger.warning(f"Failed to load Vertex AI service account key: {e}")
+                credentials = None
             auth_method = "service_account"
             logger.info(f"Vertex AI: Using service account key: {service_account_key}")
 
@@ -146,7 +157,18 @@ class GeminiLLM(LLMInterface):
         if credentials is not None:
             client_kwargs["credentials"] = credentials
 
-        self._client = genai.Client(**client_kwargs)
+        from ...config import get_config
+
+        if not get_config().skip_llm_verification or project_id:
+            try:
+                self._client = genai.Client(**client_kwargs)
+            except Exception as e:
+                if not get_config().skip_llm_verification:
+                    raise
+                logger.warning(f"Failed to initialize Vertex AI client: {e}")
+                self._client = None
+        else:
+            self._client = None
 
         logger.info(f"Vertex AI: project={project_id}, region={region}, model={self.model}, auth={auth_method}")
 
