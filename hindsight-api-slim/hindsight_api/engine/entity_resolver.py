@@ -464,11 +464,7 @@ class EntityResolver:
                 candidate_id_list,
             )
             # Build name lookup for co-occurrence mapping
-            id_to_name = {
-                row["id"]: row["canonical_name"].lower()
-                for cands in all_candidates.values()
-                for row in [{"id": c[0], "canonical_name": c[1]} for c in cands]
-            }
+            id_to_name = {c[0]: c[1].lower() for cands in all_candidates.values() for c in cands}
             for row in cooc_rows:
                 eid1, eid2 = row["entity_id_1"], row["entity_id_2"]
                 if eid1 not in cooccurrence_map:
@@ -570,11 +566,7 @@ class EntityResolver:
                 candidate_id_list,
             )
             # Build name lookup for co-occurrence mapping
-            id_to_name = {
-                row["id"]: row["canonical_name"].lower()
-                for cands in all_candidates.values()
-                for row in [{"id": c[0], "canonical_name": c[1]} for c in cands]
-            }
+            id_to_name = {c[0]: c[1].lower() for cands in all_candidates.values() for c in cands}
             for row in cooc_rows:
                 eid1, eid2 = row["entity_id_1"], row["entity_id_2"]
                 if eid1 not in cooccurrence_map:
