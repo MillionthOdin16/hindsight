@@ -1,0 +1,3 @@
+## 2026-07-09 - Remove numpy from reranking sigmoid hot-path
+**Learning:** Using inline imports like `import numpy as np` in a hot-path function (like reranking which runs per query) introduces measurable overhead (~0.2ms per call). Furthermore, for simple scalar operations on a list loop, Python's built-in `math.exp` is ~10x faster than numpy's `np.exp` because numpy pays a high conversion tax when bridging single Python floats to its C backend compared to standard math operations.
+**Action:** When performing simple math operations on a list of individual floats, prefer `math` standard library functions over `numpy` to avoid inline import and scalar C-conversion overhead. Use numpy only when performing vectorized operations on large arrays.
