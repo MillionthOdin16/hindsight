@@ -296,10 +296,15 @@ class CrossEncoderReranker:
         # so that absolute confidence is preserved — a top candidate scoring
         # 0.007 stays low rather than being inflated to 1.0 by rank normalization.
         # Local models return logits (any real number) — sigmoid is appropriate.
-        import numpy as np
-
         def _sigmoid(x: float) -> float:
-            return 1 / (1 + np.exp(-x))
+            # ⚡ Optimization: using math.exp instead of numpy.exp for scalar operations.
+            # math.exp avoids the Python-to-C conversion overhead of NumPy in this hot loop,
+            # which processes many search candidates per request.
+            # math.exp raises OverflowError on large negative values (unlike np.exp which returns 0.0).
+            try:
+                return 1.0 / (1.0 + math.exp(-x))
+            except OverflowError:
+                return 0.0
 
         if scores and min(scores) >= 0.0 and max(scores) <= 1.0:
             # Scores already in [0, 1] — pass through to preserve absolute
