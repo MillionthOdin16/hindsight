@@ -304,7 +304,7 @@ class CrossEncoderReranker:
             try:
                 return 1.0 / (1.0 + math.exp(-x))
             except OverflowError:
-                return 0.0
+                return 0.0 if x < 0 else 1.0
 
         if scores and min(scores) >= 0.0 and max(scores) <= 1.0:
             # Scores already in [0, 1] — pass through to preserve absolute
