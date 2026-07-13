@@ -123,6 +123,7 @@ jobs:
     - name: Publish to dashboard
       if: github.event_name == 'schedule' || github.event_name == 'push' || github.event_name == 'workflow_dispatch'
       env:
+
         PERF_DASHBOARD_TOKEN: ${{ secrets.PERF_DASHBOARD_TOKEN }}
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: ./scripts/benchmarks/publish-perf-results.sh hindsight-dev/perf-results.json
@@ -131,6 +132,8 @@ jobs:
     if: inputs.locomo_skip != true
     runs-on: ubuntu-latest
     env:
+      HINDSIGHT_API_SKIP_LLM_VERIFICATION: "true"
+
       HINDSIGHT_API_LLM_PROVIDER: vertexai
       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
@@ -209,6 +212,7 @@ jobs:
     - name: Publish LoComo to dashboard
       if: success() && (github.event_name == 'schedule' || github.event_name == 'push' || github.event_name == 'workflow_dispatch')
       env:
+
         PERF_DASHBOARD_TOKEN: ${{ secrets.PERF_DASHBOARD_TOKEN }}
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: ./scripts/benchmarks/publish-locomo-results.sh hindsight-dev/benchmarks/locomo/results/benchmark_results.json
@@ -220,6 +224,8 @@ jobs:
     if: inputs.obs_skip != true
     runs-on: ubuntu-latest
     env:
+      HINDSIGHT_API_SKIP_LLM_VERIFICATION: "true"
+
       HINDSIGHT_API_LLM_PROVIDER: vertexai
       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
@@ -292,6 +298,7 @@ jobs:
     - name: Publish obs to dashboard
       if: success() && (github.event_name == 'schedule' || github.event_name == 'push' || github.event_name == 'workflow_dispatch')
       env:
+
         PERF_DASHBOARD_TOKEN: ${{ secrets.PERF_DASHBOARD_TOKEN }}
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: ./scripts/benchmarks/publish-obs-results.sh hindsight-dev/obs-results.json
