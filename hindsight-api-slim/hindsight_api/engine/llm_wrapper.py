@@ -699,10 +699,14 @@ class LLMProvider:
 
         if self.provider == "vertexai":
             if not vertexai_project_id:
-                raise ValueError(
-                    "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID is required for Vertex AI provider. "
-                    "Set it to your GCP project ID."
-                )
+                import os
+                if os.getenv("HINDSIGHT_API_SKIP_LLM_VERIFICATION", "false").lower() == "true":
+                    vertexai_project_id = "mock-project-id"
+                else:
+                    raise ValueError(
+                        "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID is required for Vertex AI provider. "
+                        "Set it to your GCP project ID."
+                    )
 
             vertexai_region = vertexai_region or "us-central1"
             service_account_key = vertexai_service_account_key

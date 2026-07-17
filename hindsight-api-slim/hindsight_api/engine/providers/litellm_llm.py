@@ -77,6 +77,10 @@ class LiteLLMLLM(LLMInterface):
         super().__init__(provider, api_key, base_url, model, reasoning_effort, **kwargs)
         # ``None`` falls back to HINDSIGHT_API_LLM_TIMEOUT, then DEFAULT_LLM_TIMEOUT — never None,
         # so the hard ``asyncio.wait_for`` backstop in ``call`` is always bounded.
+        if not api_key:
+            import os
+            if os.getenv("HINDSIGHT_API_SKIP_LLM_VERIFICATION", "false").lower() == "true":
+                self.api_key = "mock-api-key"
         self.timeout = timeout if timeout is not None else float(os.getenv(ENV_LLM_TIMEOUT, str(DEFAULT_LLM_TIMEOUT)))
         self._litellm: Any = None
         # User-configured extra params merged as top-level kwargs into every

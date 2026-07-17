@@ -585,6 +585,7 @@ class OpenAICompatibleLLM(LLMInterface):
             )
             and not self.api_key
         ):
+            import os
             if os.getenv("HINDSIGHT_API_SKIP_LLM_VERIFICATION", "false").lower() == "true":
                 self.api_key = "mock-api-key"
             else:
