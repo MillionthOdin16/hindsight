@@ -1303,9 +1303,12 @@ class LLMProvider:
         if not api_key and not requires_api_key(provider):
             pass  # Provider handles its own auth
         elif not api_key:
-            raise ValueError(
-                f"{ENV_LLM_API_KEY} environment variable is required (unless using openai-codex, claude-code, or litellm)"
-            )
+            if os.getenv("HINDSIGHT_API_SKIP_LLM_VERIFICATION", "false").lower() == "true":
+                api_key = "mock-api-key"
+            else:
+                raise ValueError(
+                    f"{ENV_LLM_API_KEY} environment variable is required (unless using openai-codex, claude-code, or litellm)"
+                )
 
         base_url = os.getenv(ENV_LLM_BASE_URL, "")
         model = os.getenv(ENV_LLM_MODEL) or _get_default_model_for_provider(provider)
