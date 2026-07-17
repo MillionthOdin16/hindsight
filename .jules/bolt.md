@@ -1,0 +1,3 @@
+## 2026-10-27 - Replace np.exp with math.exp for Scalar Calculations
+**Learning:** For single scalar math operations (like calculating a sigmoid function on a single value), `numpy.exp` introduces significant overhead due to Python-to-C conversion and type checking. Using the standard library `math.exp` is much faster for these micro-operations. However, `math.exp` throws an `OverflowError` for large magnitude negative values (e.g., `-1000`), whereas `numpy` handles it by returning `0.0`.
+**Action:** Always prefer standard library `math` module functions for hot paths processing scalar values, but remember to wrap them in a `try/except OverflowError` block when reproducing `numpy`'s silent boundary handling.
