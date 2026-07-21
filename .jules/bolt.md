@@ -1,0 +1,3 @@
+## 2026-10-21 - Avoiding Heavy Imports in Scalar Operations
+**Learning:** Using heavy libraries like `numpy` for single scalar mathematical operations (like `np.exp`) inside Python hot paths introduces significant overhead due to Python-to-C conversion. `math.exp` is much faster for scalars but raises `OverflowError` for large inputs instead of handling them silently like `numpy`.
+**Action:** Replace `numpy.exp` with `math.exp` for scalar operations in hot paths, and wrap it in a `try/except OverflowError` block to properly handle overflow conditions (e.g. returning `0.0` for large negative inputs in a sigmoid function).
