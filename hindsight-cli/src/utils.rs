@@ -1,7 +1,7 @@
-use anyhow::{Context, Result};
 use crate::api::ApiClient;
 use crate::config::Config;
 use crate::output::OutputFormat;
+use anyhow::{Context, Result};
 
 /// Get API client from config
 pub fn get_client(config: &Config) -> Result<ApiClient> {

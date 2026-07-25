@@ -100,8 +100,8 @@ async def test_llm_api_methods():
     from pydantic import BaseModel
 
     class TestResponse(BaseModel):
-        answer: str
-        confidence: str
+        answer: str = "mock_answer"
+        confidence: str = "mock_confidence"
 
     structured = await llm.call(
         messages=[
@@ -133,6 +133,17 @@ async def test_llm_api_methods():
             },
         }
     ]
+
+    if _PROVIDER == "mock":
+        from hindsight_api.engine.response_models import LLMToolCallResult, LLMToolCall
+        llm.set_mock_response(
+            LLMToolCallResult(
+                tool_calls=[
+                    LLMToolCall(id="mock_1", name="get_weather", arguments={"location": "Paris"})
+                ],
+                finish_reason="tool_calls",
+            )
+        )
 
     result = await llm.call_with_tools(
         messages=[

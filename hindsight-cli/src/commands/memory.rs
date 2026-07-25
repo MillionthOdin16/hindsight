@@ -571,8 +571,13 @@ pub fn retain_files(
             pb.inc(1);
         }
 
-        let result =
-            client.file_retain(agent_id, file_data, context.clone(), strategy.clone(), verbose)?;
+        let result = client.file_retain(
+            agent_id,
+            file_data,
+            context.clone(),
+            strategy.clone(),
+            verbose,
+        )?;
         all_operation_ids.extend(result.operation_ids);
     }
 

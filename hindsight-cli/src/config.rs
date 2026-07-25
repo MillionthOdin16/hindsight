@@ -74,7 +74,11 @@ impl Config {
         }
 
         // 4. Fall back to default
-        Self::validate_and_create(DEFAULT_API_URL.to_string(), env_api_key, ConfigSource::Default)
+        Self::validate_and_create(
+            DEFAULT_API_URL.to_string(),
+            env_api_key,
+            ConfigSource::Default,
+        )
     }
 
     /// Legacy method for backwards compatibility
@@ -82,14 +86,22 @@ impl Config {
         Self::load()
     }
 
-    fn validate_and_create(api_url: String, api_key: Option<String>, source: ConfigSource) -> Result<Self> {
+    fn validate_and_create(
+        api_url: String,
+        api_key: Option<String>,
+        source: ConfigSource,
+    ) -> Result<Self> {
         if !api_url.starts_with("http://") && !api_url.starts_with("https://") {
             anyhow::bail!(
                 "Invalid API URL: {}. Must start with http:// or https://",
                 api_url
             );
         }
-        Ok(Config { api_url, api_key, source })
+        Ok(Config {
+            api_url,
+            api_key,
+            source,
+        })
     }
 
     fn config_dir() -> Option<PathBuf> {
@@ -152,8 +164,12 @@ impl Config {
 
         // Create config directory if it doesn't exist
         if !config_dir.exists() {
-            fs::create_dir_all(&config_dir)
-                .with_context(|| format!("Failed to create config directory: {}", config_dir.display()))?;
+            fs::create_dir_all(&config_dir).with_context(|| {
+                format!(
+                    "Failed to create config directory: {}",
+                    config_dir.display()
+                )
+            })?;
         }
 
         let config_path = config_dir.join(CONFIG_FILE_NAME);
@@ -292,7 +308,10 @@ fn save_profile_to_dir(
         use std::os::unix::fs::PermissionsExt;
         let perms = fs::Permissions::from_mode(0o600);
         fs::set_permissions(&path, perms).with_context(|| {
-            format!("Failed to set permissions on profile file: {}", path.display())
+            format!(
+                "Failed to set permissions on profile file: {}",
+                path.display()
+            )
         })?;
     }
 
@@ -370,9 +389,16 @@ pub fn parse_config_value(line: &str, key: &str) -> Option<String> {
     if !line.starts_with(key) {
         return None;
     }
-    line.split('=').nth(1).map(|value| {
-        value.trim().trim_matches('"').trim_matches('\'').to_string()
-    }).filter(|v| !v.is_empty())
+    line.split('=')
+        .nth(1)
+        .map(|value| {
+            value
+                .trim()
+                .trim_matches('"')
+                .trim_matches('\'')
+                .to_string()
+        })
+        .filter(|v| !v.is_empty())
 }
 
 #[cfg(test)]
@@ -382,7 +408,10 @@ mod tests {
     #[test]
     fn test_config_source_display() {
         assert_eq!(format!("{}", ConfigSource::LocalFile), "config file");
-        assert_eq!(format!("{}", ConfigSource::Environment), "environment variable");
+        assert_eq!(
+            format!("{}", ConfigSource::Environment),
+            "environment variable"
+        );
         assert_eq!(format!("{}", ConfigSource::Default), "default");
         assert_eq!(
             format!("{}", ConfigSource::Profile("prod".to_string())),
@@ -424,8 +453,8 @@ mod tests {
     #[test]
     fn test_save_and_load_profile_roundtrip() {
         let dir = tempdir();
-        let path = save_profile_to_dir(&dir, "prod", "https://api.example.com", Some("hsk_abc"))
-            .unwrap();
+        let path =
+            save_profile_to_dir(&dir, "prod", "https://api.example.com", Some("hsk_abc")).unwrap();
         assert!(path.exists());
 
         let (url, key) = load_profile_from_dir(&dir, "prod").unwrap();
@@ -460,7 +489,9 @@ mod tests {
         let dir = tempdir();
         let path = dir.join("broken.toml");
         std::fs::write(&path, "api_key = \"x\"\n").unwrap();
-        let err = load_profile_from_dir(&dir, "broken").unwrap_err().to_string();
+        let err = load_profile_from_dir(&dir, "broken")
+            .unwrap_err()
+            .to_string();
         assert!(err.contains("missing required 'api_url'"));
     }
 
@@ -513,11 +544,8 @@ mod tests {
 
     #[test]
     fn test_validate_and_create_invalid_url() {
-        let config = Config::validate_and_create(
-            "localhost:8888".to_string(),
-            None,
-            ConfigSource::Default,
-        );
+        let config =
+            Config::validate_and_create("localhost:8888".to_string(), None, ConfigSource::Default);
         assert!(config.is_err());
         let err = config.unwrap_err().to_string();
         assert!(err.contains("Invalid API URL"));
@@ -585,22 +613,13 @@ mod tests {
 
     #[test]
     fn test_parse_config_value_wrong_key() {
-        assert_eq!(
-            parse_config_value("api_key = secret", "api_url"),
-            None
-        );
+        assert_eq!(parse_config_value("api_key = secret", "api_url"), None);
     }
 
     #[test]
     fn test_parse_config_value_empty() {
-        assert_eq!(
-            parse_config_value("api_url = ", "api_url"),
-            None
-        );
-        assert_eq!(
-            parse_config_value("api_url = \"\"", "api_url"),
-            None
-        );
+        assert_eq!(parse_config_value("api_url = ", "api_url"), None);
+        assert_eq!(parse_config_value("api_url = \"\"", "api_url"), None);
     }
 
     #[test]
