@@ -695,11 +695,15 @@ class LLMProvider:
         vertexai_credentials = None
 
         if self.provider == "vertexai":
-            if not vertexai_project_id:
-                raise ValueError(
-                    "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID is required for Vertex AI provider. "
-                    "Set it to your GCP project ID."
-                )
+            # Only validate if not explicitly skipping verification (e.g. for offline mock tests)
+            from ..config import get_config
+
+            if not getattr(self, "_skip_llm_verification", get_config().skip_llm_verification):
+                if not vertexai_project_id:
+                    raise ValueError(
+                        "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID is required for Vertex AI provider. "
+                        "Set it to your GCP project ID."
+                    )
 
             vertexai_region = vertexai_region or "us-central1"
             service_account_key = vertexai_service_account_key

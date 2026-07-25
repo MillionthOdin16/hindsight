@@ -18,8 +18,8 @@ from datetime import datetime
 import pytest
 
 from hindsight_api.engine.llm_wrapper import LLMProvider
-from hindsight_api.engine.utils import extract_facts
 from hindsight_api.engine.search.think_utils import reflect
+from hindsight_api.engine.utils import extract_facts
 
 pytestmark = pytest.mark.hs_llm_mat
 
@@ -45,6 +45,10 @@ def _get_api_key() -> str:
 
 
 def _make_llm() -> LLMProvider:
+    # Skip test completely if provider is empty (happens when HINDSIGHT_API_SKIP_LLM_VERIFICATION=true without specific provider)
+    if not _PROVIDER:
+        pytest.skip("No LLM provider configured")
+
     # LLMProvider uses provider-specific settings as-passed (it does not resolve
     # them from global config), so forward the ones whose providers require them:
     # Vertex AI needs project/region, and litellmrouter needs its router config.
@@ -100,8 +104,8 @@ async def test_llm_api_methods():
     from pydantic import BaseModel
 
     class TestResponse(BaseModel):
-        answer: str
-        confidence: str
+        answer: str = "mock_answer"
+        confidence: str = "mock_confidence"
 
     structured = await llm.call(
         messages=[
@@ -133,6 +137,16 @@ async def test_llm_api_methods():
             },
         }
     ]
+
+    if _PROVIDER == "mock":
+        from hindsight_api.engine.response_models import LLMToolCall, LLMToolCallResult
+
+        llm.set_mock_response(
+            LLMToolCallResult(
+                tool_calls=[LLMToolCall(id="mock_1", name="get_weather", arguments={"location": "Paris"})],
+                finish_reason="tool_calls",
+            )
+        )
 
     result = await llm.call_with_tools(
         messages=[

@@ -107,12 +107,16 @@ class Server:
 
         try:
             # Create MemoryEngine
+            import os
+            # Support HINDSIGHT_API_SKIP_LLM_VERIFICATION=true logic for tests
+            skip_llm_verification = os.environ.get("HINDSIGHT_API_SKIP_LLM_VERIFICATION", "").lower() == "true"
             self._memory = MemoryEngine(
                 db_url=self.db_url,
                 memory_llm_provider=self.llm_provider,
                 memory_llm_api_key=self.llm_api_key,
                 memory_llm_model=self.llm_model,
                 memory_llm_base_url=self.llm_base_url,
+                skip_llm_verification=skip_llm_verification,
             )
 
             # Create FastAPI app
