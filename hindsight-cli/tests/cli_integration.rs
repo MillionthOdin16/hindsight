@@ -147,8 +147,8 @@ fn test_bank_create_and_delete() {
         "--mission", "A test bank for CLI integration tests",
     ]);
 
-    let stdout = String::from_utf8_lossy(&output.stdout);
-    let stderr = String::from_utf8_lossy(&output.stderr);
+    let _stdout = String::from_utf8_lossy(&output.stdout);
+    let _stderr = String::from_utf8_lossy(&output.stderr);
 
     // Bank might already exist, which is OK
     let created = output.status.success();
