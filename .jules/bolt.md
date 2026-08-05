@@ -1,0 +1,3 @@
+## 2026-07-28 - [Performance optimization: math.exp over numpy.exp]
+**Learning:** Using `numpy.exp` for scalar operations in a loop has significant overhead due to C-extensions and type conversions. `math.exp` is much faster for single values, though it raises an `OverflowError` on large negative inputs, whereas `numpy.exp` handles this by underflowing to 0.0.
+**Action:** Replace `numpy.exp` with `math.exp` in hot loops when processing scalar values, and wrap it in a `try...except OverflowError` block to return `0.0` to preserve the previous behavior while reducing overhead. Ensure that `math` is imported in the file.
