@@ -77,6 +77,8 @@ async def test_llm_api_methods():
     3. call() with response_format - Structured output (used in fact extraction)
     4. call_with_tools() - Tool calling (used in reflect agent)
     """
+    import os
+    if not _PROVIDER: return
     llm = _make_llm()
 
     # Test 1: verify_connection()

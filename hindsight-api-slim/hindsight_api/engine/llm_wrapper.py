@@ -719,6 +719,8 @@ class LLMProvider:
         vertexai_credentials = None
 
         if self.provider == "vertexai":
+            if getattr(self, "_skip_llm_verification", False):
+                vertexai_project_id = vertexai_project_id or "dummy-project-id"
             if not vertexai_project_id and not getattr(self, "_skip_llm_verification", False):
                 raise ValueError(
                     "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID is required for Vertex AI provider. "
