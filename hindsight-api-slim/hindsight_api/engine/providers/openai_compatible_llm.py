@@ -630,7 +630,8 @@ class OpenAICompatibleLLM(LLMInterface):
             )
             and not self.api_key
         ):
-            raise ValueError(f"API key is required for {self.provider}")
+            if not getattr(self, "_skip_llm_verification", False):
+                raise ValueError(f"API key is required for {self.provider}")
 
         # Service tier configuration (from config, not env vars)
         self.groq_service_tier = groq_service_tier
@@ -679,6 +680,8 @@ class OpenAICompatibleLLM(LLMInterface):
         return DEFAULT_VERIFICATION_MAX_COMPLETION_TOKENS
 
     async def verify_connection(self) -> None:
+        if getattr(self, "_skip_llm_verification", False):
+            return
         """
         Verify that the provider is configured correctly by making a simple test call.
 

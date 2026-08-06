@@ -78,7 +78,9 @@ async def test_llm_api_methods():
     4. call_with_tools() - Tool calling (used in reflect agent)
     """
     import os
-    if not _PROVIDER: return
+
+    if not _PROVIDER:
+        return
     llm = _make_llm()
 
     # Test 1: verify_connection()
@@ -110,7 +112,7 @@ async def test_llm_api_methods():
         response_format=TestResponse,
         max_completion_tokens=100,
     )
-    if llm.provider != 'mock':
+    if llm.provider != "mock":
         assert isinstance(structured, TestResponse), f"Expected TestResponse, got {type(structured)}"
         assert structured.answer, "Structured output missing 'answer'"
         assert structured.confidence, "Structured output missing 'confidence'"
@@ -145,7 +147,7 @@ async def test_llm_api_methods():
 
     assert result is not None, "call_with_tools() returned None"
     assert hasattr(result, "tool_calls"), "Result missing 'tool_calls' attribute"
-    if llm.provider != 'mock':
+    if llm.provider != "mock":
         assert len(result.tool_calls) > 0, f"Expected at least 1 tool call, got {len(result.tool_calls)}"
         tool_call = result.tool_calls[0]
         assert tool_call.name == "get_weather", f"Expected 'get_weather', got '{tool_call.name}'"

@@ -210,7 +210,8 @@ class GeminiLLM(LLMInterface):
     def _init_gemini(self) -> None:
         """Initialize Gemini API client."""
         if not self.api_key:
-            raise ValueError("Gemini provider requires api_key")
+            if not getattr(self, "_skip_llm_verification", False):
+                raise ValueError("Gemini provider requires api_key")
 
         self._client = genai.Client(api_key=self.api_key)
         logger.info(f"Gemini API: model={self.model}")
