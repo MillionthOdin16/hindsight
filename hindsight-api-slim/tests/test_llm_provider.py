@@ -42,6 +42,8 @@ def _get_api_key() -> str:
 
 
 def _make_llm() -> LLMProvider:
+    if not _PROVIDER:
+        pytest.skip("No provider specified")
     # LLMProvider uses provider-specific settings as-passed (it does not resolve
     # them from global config), so forward the ones whose providers require them:
     # Vertex AI needs project/region, and litellmrouter needs its router config.

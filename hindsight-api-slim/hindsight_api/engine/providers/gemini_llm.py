@@ -211,7 +211,11 @@ class GeminiLLM(LLMInterface):
     def _init_gemini(self) -> None:
         """Initialize Gemini API client."""
         if not self.api_key:
-            raise ValueError("Gemini provider requires api_key")
+            import os
+            if os.getenv("HINDSIGHT_API_SKIP_LLM_VERIFICATION", "false").lower() == "true":
+                self.api_key = "mock-api-key"
+            else:
+                raise ValueError("Gemini provider requires api_key")
 
         self._client = genai.Client(api_key=self.api_key)
         logger.info(f"Gemini API: model={self.model}")

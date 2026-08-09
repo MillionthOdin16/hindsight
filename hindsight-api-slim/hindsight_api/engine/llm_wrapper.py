@@ -761,10 +761,14 @@ class LLMProvider:
 
         if self.provider == "vertexai":
             if not vertexai_project_id:
-                raise ValueError(
-                    "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID is required for Vertex AI provider. "
-                    "Set it to your GCP project ID."
-                )
+                import os
+                if os.getenv("HINDSIGHT_API_SKIP_LLM_VERIFICATION", "false").lower() == "true":
+                    vertexai_project_id = "mock-project-id"
+                else:
+                    raise ValueError(
+                        "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID is required for Vertex AI provider. "
+                        "Set it to your GCP project ID."
+                    )
 
             vertexai_region = vertexai_region or "us-central1"
             service_account_key = vertexai_service_account_key
@@ -1403,9 +1407,12 @@ class LLMProvider:
         if not api_key and not requires_api_key(provider):
             pass  # Provider handles its own auth
         elif not api_key:
-            raise ValueError(
-                f"{ENV_LLM_API_KEY} environment variable is required (unless using openai-codex, claude-code, or litellm)"
-            )
+            if os.getenv("HINDSIGHT_API_SKIP_LLM_VERIFICATION", "false").lower() == "true":
+                api_key = "mock-api-key"
+            else:
+                raise ValueError(
+                    f"{ENV_LLM_API_KEY} environment variable is required (unless using openai-codex, claude-code, or litellm)"
+                )
 
         base_url = os.getenv(ENV_LLM_BASE_URL, "")
         model = os.getenv(ENV_LLM_MODEL) or _get_default_model_for_provider(provider)

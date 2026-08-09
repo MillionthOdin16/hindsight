@@ -117,7 +117,11 @@ class AnthropicLLM(LLMInterface):
         super().__init__(provider, api_key, base_url, model, reasoning_effort, **kwargs)
 
         if not self.api_key:
-            raise ValueError("API key is required for Anthropic provider")
+            import os
+            if os.getenv("HINDSIGHT_API_SKIP_LLM_VERIFICATION", "false").lower() == "true":
+                self.api_key = "mock-api-key"
+            else:
+                raise ValueError("API key is required for Anthropic provider")
 
         # User-configured extra body params (merged into every Messages API call)
         self._extra_body = extra_body or {}
