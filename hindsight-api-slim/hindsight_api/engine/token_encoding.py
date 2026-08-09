@@ -24,6 +24,11 @@ class _SafeEncoding:
         self._encoding = encoding
 
     def encode(self, text: str, **kwargs) -> list[int]:
+        if not kwargs:
+            # encode_ordinary bypasses all regex checks for special tokens, treating
+            # them as ordinary text. This is ~20% faster than encode with disallowed_special=().
+            return self._encoding.encode_ordinary(text)
+
         # Count special-token literals as ordinary text instead of rejecting them.
         kwargs.setdefault("disallowed_special", ())
         return self._encoding.encode(text, **kwargs)

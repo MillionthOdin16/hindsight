@@ -27,6 +27,7 @@ def test_reflect_token_counting_loads_tiktoken_encoding_when_used():
     fake_encoding = MagicMock()
     # _SafeEncoding.encode passes disallowed_special=(); accept and ignore kwargs.
     fake_encoding.encode.side_effect = lambda text, **kwargs: text.split()
+    fake_encoding.encode_ordinary.side_effect = lambda text: text.split()
 
     with patch("tiktoken.get_encoding", return_value=fake_encoding) as get_encoding:
         agent = importlib.import_module("hindsight_api.engine.reflect.agent")
