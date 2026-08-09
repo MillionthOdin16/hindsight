@@ -1,0 +1,3 @@
+## 2026-10-15 - Optimize Sigmoid Activation by using math.exp instead of numpy.exp
+**Learning:** For single scalar operations in hot paths (e.g. normalizing cross-encoder scores one by one), inline imports (like `import numpy as np`) and the C-call overhead of `numpy.exp` can be significant bottlenecks. `math.exp` is much faster for scalars in Python.
+**Action:** When working on performance optimizations in hot paths, check for inline imports of heavy libraries and single-item tensor/array operations. Prefer standard library alternatives like `math.exp` over `numpy.exp` for scalar calculations, but ensure boundary conditions (e.g. `OverflowError` in `math.exp` versus graceful handling in numpy) are properly guarded with try-except blocks.
