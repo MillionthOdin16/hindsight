@@ -631,7 +631,10 @@ class OpenAICompatibleLLM(LLMInterface):
             )
             and not self.api_key
         ):
-            raise ValueError(f"API key is required for {self.provider}")
+            if os.getenv("HINDSIGHT_API_SKIP_LLM_VERIFICATION") == "true":
+                self.api_key = "dummy-key-for-testing"
+            else:
+                raise ValueError(f"API key is required for {self.provider}")
 
         # Service tier configuration (from config, not env vars)
         self.groq_service_tier = groq_service_tier

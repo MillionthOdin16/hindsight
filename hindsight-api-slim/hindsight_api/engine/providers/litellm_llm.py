@@ -121,6 +121,10 @@ class LiteLLMLLM(LLMInterface):
         from ...config import get_config
 
         try:
+            import os
+
+            if os.getenv("HINDSIGHT_API_SKIP_LLM_VERIFICATION") == "true":
+                return
             test_messages = [{"role": "user", "content": "test"}]
             await self.call(
                 messages=test_messages,
