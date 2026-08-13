@@ -1,0 +1,3 @@
+## 2026-08-13 - math.exp vs numpy.exp for scalar operations
+**Learning:** In the cross-encoder score normalization logic, `numpy.exp` is currently used for computing the sigmoid of scalar values. This introduces unnecessary overhead by calling into the heavy C-extension numpy library, when `math.exp` from the standard Python library is much faster for single scalar operations. `math.exp` raises an exception for large inputs (e.g. large negative values producing positive infinity) where `numpy.exp` handles it, so a `try/except OverflowError` is required.
+**Action:** Replace `numpy.exp` with `math.exp` wrapped in a `try/except OverflowError` block.
