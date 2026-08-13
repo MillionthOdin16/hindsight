@@ -276,7 +276,7 @@ _PROVIDERS_WITHOUT_API_KEY = frozenset(
 
 def requires_api_key(provider: str) -> bool:
     """Return True if the given provider requires an API key to operate."""
-    return provider.lower() not in _PROVIDERS_WITHOUT_API_KEY and provider.lower() != "mock"
+    return provider.lower() not in _PROVIDERS_WITHOUT_API_KEY
 
 
 def _validate_ollama_num_ctx(value: Any) -> int | None:
