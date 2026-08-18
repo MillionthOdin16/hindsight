@@ -1,0 +1,3 @@
+## 2026-08-18 - Replacing `numpy.exp` with `math.exp` for scalar operations in hot paths
+**Learning:** For single scalar operations (e.g. sigmoid on single list elements), `math.exp` is significantly faster than `numpy.exp` (~6x faster) because it avoids Python-to-C conversion overhead. However, `math.exp` raises `OverflowError` for large magnitude negative values (e.g., `-1000`), whereas `numpy.exp` quietly returns `0.0` or `inf`.
+**Action:** When migrating from `numpy.exp` to `math.exp` for scalar operations in a hot path, wrap the call in a `try/except OverflowError` block. If calculating a sigmoid, return `0.0` if `x < 0` (or `1.0` if `x > 0` but `math.exp(-x)` only overflows for negative `x`).
