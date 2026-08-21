@@ -164,6 +164,10 @@ class LiteLLMRouterLLM(LiteLLMLLM):
         from ...config import get_config
 
         try:
+            import os
+
+            if os.getenv("HINDSIGHT_API_SKIP_LLM_VERIFICATION") == "true":
+                return
             await self.call(
                 messages=[{"role": "user", "content": "test"}],
                 max_completion_tokens=50,

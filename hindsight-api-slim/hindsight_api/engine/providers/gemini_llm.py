@@ -11,6 +11,7 @@ import base64
 import io
 import json
 import logging
+import os
 import time
 from contextlib import AbstractAsyncContextManager, nullcontext
 from contextvars import ContextVar
@@ -211,7 +212,10 @@ class GeminiLLM(LLMInterface):
     def _init_gemini(self) -> None:
         """Initialize Gemini API client."""
         if not self.api_key:
-            raise ValueError("Gemini provider requires api_key")
+            if os.getenv("HINDSIGHT_API_SKIP_LLM_VERIFICATION") == "true":
+                self.api_key = "dummy-key-for-testing"
+            else:
+                raise ValueError("Gemini provider requires api_key")
 
         self._client = genai.Client(api_key=self.api_key)
         logger.info(f"Gemini API: model={self.model}")
@@ -235,10 +239,14 @@ class GeminiLLM(LLMInterface):
         credentials = kwargs.get("vertexai_credentials")  # Pre-loaded credentials object
 
         if not project_id:
-            raise ValueError(
-                "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID is required for Vertex AI provider. "
-                "Set it to your GCP project ID."
-            )
+            if os.getenv("HINDSIGHT_API_SKIP_LLM_VERIFICATION") == "true":
+                project_id = "dummy-project-id"
+                region = "us-central1"
+            else:
+                raise ValueError(
+                    "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID is required for Vertex AI provider. "
+                    "Set it to your GCP project ID."
+                )
 
         auth_method = "ADC"
 
