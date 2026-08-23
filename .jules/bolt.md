@@ -1,0 +1,3 @@
+## 2026-07-27 - [Replacing numpy.exp with math.exp in Python hot paths]
+**Learning:** For single scalar operations in hot paths like reranking scoring, `math.exp` is significantly faster than `numpy.exp` (0.16s vs 0.98s per million iterations) because it avoids Python-to-C array conversion overhead. However, `math.exp` throws an `OverflowError` for large negative inputs instead of returning 0.0 like `numpy.exp`.
+**Action:** When replacing `numpy.exp` with `math.exp` for scalar values, ensure the call is wrapped in a `try/except OverflowError` block, handling it by returning 0.0, to maintain identical mathematical behavior for edge cases.
