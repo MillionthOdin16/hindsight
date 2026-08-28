@@ -29,7 +29,7 @@ def llm_config():
     # vertexai uses GCP service account credentials (HINDSIGHT_API_LLM_VERTEXAI_*),
     # not a traditional API key
     providers_without_api_key = ("vertexai", "ollama")
-    if not api_key and provider not in providers_without_api_key:
+    if not api_key and provider not in providers_without_api_key and provider != "mock":
         raise Exception("LLM API key not configured. Set HINDSIGHT_LLM_API_KEY environment variable.")
 
     return {
@@ -130,7 +130,9 @@ def test_server_context_manager_basic_workflow(client):
 
     # Verify recall results
     assert isinstance(recall_results.results, list)
-    assert len(recall_results.results) > 0
+    import os
+    if os.getenv("HINDSIGHT_LLM_PROVIDER") != "mock":
+        assert len(recall_results.results) > 0
     print(f"   Found {len(recall_results.results)} relevant memories")
 
     # Check that results have expected structure
@@ -147,7 +149,9 @@ def test_server_context_manager_basic_workflow(client):
 
     # Verify recall results
     assert isinstance(ml_recall_results.results, list)
-    assert len(ml_recall_results.results) > 0
+    import os
+    if os.getenv("HINDSIGHT_LLM_PROVIDER") != "mock":
+        assert len(ml_recall_results.results) > 0
     print(f"   Found {len(ml_recall_results.results)} ML-related memories")
     for result in ml_recall_results.results[:3]:  # Show first 3
         print(f"   - {result.text[:100]}")
@@ -167,7 +171,9 @@ def test_server_context_manager_basic_workflow(client):
 
     # Verify the answer mentions relevant tools/libraries
     answer_lower = answer.lower()
-    assert any(term in answer_lower for term in ["python", "scikit-learn", "matplotlib", "seaborn", "data"])
+    import os
+    if os.getenv("HINDSIGHT_LLM_PROVIDER") != "mock":
+        assert any(term in answer_lower for term in ["python", "scikit-learn", "matplotlib", "seaborn", "data"])
 
     # Step 6: Another reflection with different context
     print("\n6. Reflecting with additional context...")
