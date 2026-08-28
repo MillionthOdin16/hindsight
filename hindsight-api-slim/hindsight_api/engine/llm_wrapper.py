@@ -761,6 +761,7 @@ class LLMProvider:
 
         if self.provider == "vertexai":
             from hindsight_api.config import get_config
+
             if not vertexai_project_id and not get_config().skip_llm_verification:
                 raise ValueError(
                     "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID is required for Vertex AI provider. "
@@ -1403,7 +1404,7 @@ class LLMProvider:
 
         if not api_key and not requires_api_key(provider):
             pass  # Provider handles its own auth
-        elif not api_key and not getattr(self, '_skip_llm_verification', False):
+        elif not api_key and not getattr(self, "_skip_llm_verification", False):
             raise ValueError(
                 f"{ENV_LLM_API_KEY} environment variable is required (unless using openai-codex, claude-code, or litellm)"
             )

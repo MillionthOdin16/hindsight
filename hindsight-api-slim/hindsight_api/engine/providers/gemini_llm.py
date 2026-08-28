@@ -212,6 +212,7 @@ class GeminiLLM(LLMInterface):
         """Initialize Gemini API client."""
         if not self.api_key:
             from hindsight_api.config import get_config
+
             if not get_config().skip_llm_verification:
                 raise ValueError("Gemini provider requires api_key")
 

@@ -632,6 +632,7 @@ class OpenAICompatibleLLM(LLMInterface):
             and not self.api_key
         ):
             from hindsight_api.config import get_config
+
             if not get_config().skip_llm_verification:
                 raise ValueError(f"API key is required for {self.provider}")
 
