@@ -1,0 +1,3 @@
+## 2026-10-27 - [Scalar math optimization in hot loop]
+**Learning:** In `hindsight_api/engine/search/reranking.py`, `numpy.exp` is used within a `_sigmoid` function defined inside the `rerank` loop. Since it processes individual scalar values, the C-API dispatch overhead of `numpy` is disproportionately high (measured ~6x slower than `math.exp`). `math.exp` raises an `OverflowError` on large values rather than returning 0.0 or inf like `numpy` does, requiring a `try-except` block.
+**Action:** Replace `numpy` math functions with python `math` functions when evaluating individual scalar inputs in loops, and catch `OverflowError` appropriately.
