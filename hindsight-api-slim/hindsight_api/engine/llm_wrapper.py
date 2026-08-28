@@ -762,7 +762,11 @@ class LLMProvider:
         if self.provider == "vertexai":
             from hindsight_api.config import get_config
 
-            if not vertexai_project_id and not get_config().skip_llm_verification:
+            if (
+                not vertexai_project_id
+                and not get_config().skip_llm_verification
+                and get_config().llm_provider != "mock"
+            ):
                 raise ValueError(
                     "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID is required for Vertex AI provider. "
                     "Set it to your GCP project ID."

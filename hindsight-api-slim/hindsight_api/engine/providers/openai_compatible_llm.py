@@ -633,7 +633,7 @@ class OpenAICompatibleLLM(LLMInterface):
         ):
             from hindsight_api.config import get_config
 
-            if not get_config().skip_llm_verification:
+            if not get_config().skip_llm_verification and get_config().llm_provider != "mock":
                 raise ValueError(f"API key is required for {self.provider}")
 
         # Service tier configuration (from config, not env vars)

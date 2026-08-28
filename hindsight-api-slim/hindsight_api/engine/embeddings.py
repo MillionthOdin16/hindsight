@@ -1714,7 +1714,7 @@ def create_embeddings_from_env() -> Embeddings:
         )
     elif provider == "cohere":
         api_key = config.embeddings_cohere_api_key
-        if not api_key:
+        if not api_key and config.llm_provider != "mock":
             raise ValueError(f"{ENV_EMBEDDINGS_COHERE_API_KEY} is required when {ENV_EMBEDDINGS_PROVIDER} is 'cohere'")
         return CohereEmbeddings(
             api_key=api_key,
