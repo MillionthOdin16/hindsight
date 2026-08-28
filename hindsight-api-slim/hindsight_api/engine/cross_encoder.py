@@ -1721,7 +1721,7 @@ def create_cross_encoder(member: RerankerMemberConfig) -> CrossEncoderModel:
         )
     elif provider == "cohere":
         api_key = member.cohere_api_key
-        if not api_key:
+        if not api_key and get_config().llm_provider != "mock":
             raise ValueError(
                 f"{member.env_name('COHERE_API_KEY')} is required when {member.env_name('PROVIDER')} is 'cohere'"
             )

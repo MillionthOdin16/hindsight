@@ -201,7 +201,10 @@ class OpenAIResponsesLLM(LLMInterface):
         super().__init__(provider, api_key, base_url, model, reasoning_effort, **kwargs)
 
         if not self.api_key:
-            raise ValueError(f"API key is required for {self.provider}")
+            from hindsight_api.config import get_config
+
+            if not get_config().skip_llm_verification and get_config().llm_provider != "mock":
+                raise ValueError(f"API key is required for {self.provider}")
 
         # OpenAI service tier ("flex" = 50% cheaper / variable latency, "priority",
         # "default"). Applied as the native Responses ``service_tier`` param.
