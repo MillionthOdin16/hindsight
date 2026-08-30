@@ -1,0 +1,3 @@
+## 2026-08-30 - Standardizing on standard library `math.exp` for scalar exponential calculations
+**Learning:** In the `_sigmoid` function within `hindsight_api/engine/search/reranking.py`, `numpy.exp` was being called on scalar values (floats). Although `numpy` is highly optimized for vectorized operations on arrays, using `numpy.exp` for single scalar values introduces significant overhead due to Python-to-C API conversion.
+**Action:** Replaced scalar calls to `numpy.exp` with the standard library `math.exp`. Added a `try...except OverflowError` block to safely handle large negative inputs (returning `0.0` as `numpy.exp` would do for highly negative numbers).
