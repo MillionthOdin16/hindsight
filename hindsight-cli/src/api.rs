@@ -558,6 +558,8 @@ impl ApiClient {
                     limit.map(|l| l as u64),
                     offset.map(|o| o as u64),
                     q,
+                    None, // sort_by
+                    None, // tags
                     None, // state
                     None, // tags
                     None, // tags_match
