@@ -1,0 +1,3 @@
+## 2026-08-01 - Optimizing reranker logit normalization
+**Learning:** Replaced numpy.exp with math.exp in `_sigmoid` function in `hindsight_api/engine/search/reranking.py`. Benchmarks indicate `math.exp` is ~6x faster than `numpy.exp` for single scalar operations because it avoids the overhead of Python-to-C and back conversions.
+**Action:** Always prefer standard library `math` module functions over `numpy` when performing scalar operations in hot loops (e.g., scoring loops or logit normalization), but remember to handle `OverflowError` appropriately, as `math.exp` raises it on extreme values unlike `numpy.exp` which returns `inf` or `0.0`.

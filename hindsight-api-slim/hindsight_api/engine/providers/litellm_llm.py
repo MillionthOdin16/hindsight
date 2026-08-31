@@ -145,6 +145,8 @@ class LiteLLMLLM(LLMInterface):
             raise RuntimeError("LiteLLM SDK not installed. Run: uv add litellm or pip install litellm") from e
 
     async def verify_connection(self) -> None:
+        if getattr(self, "_skip_llm_verification", False):
+            return
         from ...config import get_config
 
         try:

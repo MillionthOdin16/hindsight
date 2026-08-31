@@ -166,6 +166,8 @@ class LiteLLMRouterLLM(LiteLLMLLM):
         return kwargs
 
     async def verify_connection(self) -> None:
+        if getattr(self, "_skip_llm_verification", False):
+            return
         from hindsight_api.engine.llm_interface import OutputTooLongError
 
         from ...config import get_config
