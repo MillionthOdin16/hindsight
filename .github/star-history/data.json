@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "repository": "vectorize-io/hindsight",
+  "repository": "MillionthOdin16/hindsight",
   "backfilledAt": "2026-08-03T10:36:26.721Z",
   "backfill": [
     {
@@ -1096,6 +1096,10 @@
     {
       "date": "2026-08-31",
       "stars": 21887
+    },
+    {
+      "date": "2026-09-01",
+      "stars": 0
     }
   ]
 }
