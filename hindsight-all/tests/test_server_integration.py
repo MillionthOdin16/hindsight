@@ -37,9 +37,6 @@ def llm_config():
         "llm_provider": provider,
         "llm_api_key": api_key,
         "llm_model": model,
-        "vertexai_project_id": os.getenv("HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID"),
-        "vertexai_region": os.getenv("HINDSIGHT_API_LLM_VERTEXAI_REGION"),
-        "vertexai_service_account_key": os.getenv("HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY"),
     }
 
 
