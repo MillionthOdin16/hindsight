@@ -32,11 +32,16 @@ def llm_config():
     if not api_key and provider not in providers_without_api_key:
         raise Exception("LLM API key not configured. Set HINDSIGHT_LLM_API_KEY environment variable.")
 
+    # Always grab VertexAI specifics
     return {
         "llm_provider": provider,
         "llm_api_key": api_key,
         "llm_model": model,
+        "vertexai_project_id": os.getenv("HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID"),
+        "vertexai_region": os.getenv("HINDSIGHT_API_LLM_VERTEXAI_REGION"),
+        "vertexai_service_account_key": os.getenv("HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY"),
     }
+
 
 
 @pytest.fixture(scope="session")
