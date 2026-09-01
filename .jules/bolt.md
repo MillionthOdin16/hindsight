@@ -1,0 +1,3 @@
+## 2026-09-01 - Optimize sigmoid function by replacing numpy with math
+**Learning:** Found `numpy.exp` being used in a hot path for scalar operations in `hindsight_api/engine/search/reranking.py`. For single scalar operations, Python's built-in `math.exp` is significantly faster than `numpy.exp` due to avoiding Python-to-C conversion overhead. `numpy.exp` should only be used for vectorized array operations.
+**Action:** Replace `numpy.exp` with `math.exp` in single scalar functions like `_sigmoid`. When using `math.exp`, handle `OverflowError` for highly negative values since `numpy.exp` naturally returned 0.0 without raising exceptions, preserving the old behaviour.
