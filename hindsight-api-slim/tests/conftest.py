@@ -619,6 +619,9 @@ async def memory_real_llm(pg0_db_url, embeddings, cross_encoder, query_analyzer)
         pool_max_size=15,
         run_migrations=False,
         task_backend=SyncTaskBackend(),
+        vertexai_project_id=os.getenv("HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID"),
+        vertexai_region=os.getenv("HINDSIGHT_API_LLM_VERTEXAI_REGION", "us-central1"),
+        vertexai_service_account_key=os.getenv("HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY"),
     )
     await mem.initialize()
     yield mem
