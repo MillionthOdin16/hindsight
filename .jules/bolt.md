@@ -1,0 +1,3 @@
+## 2026-05-19 - Use math.exp for scalar operation in hot path
+**Learning:** Using `numpy.exp` for single scalar operations incurs a high overhead due to Python-to-C conversion and should be replaced with standard library `math.exp` in performance critical paths. In `.hindsight-api-slim/hindsight_api/engine/search/reranking.py`, a `_sigmoid` function inside a loop imported and used `numpy.exp`. `math.exp` is much faster for single values, but it raises `OverflowError` for large negative values (resulting in positive infinity), whereas `numpy.exp` handles this by returning 0.0 or inf. We must catch `OverflowError` when substituting.
+**Action:** Replace `numpy.exp` with `math.exp` wrapped in a `try/except OverflowError` block.
