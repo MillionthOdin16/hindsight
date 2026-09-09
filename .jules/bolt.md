@@ -1,0 +1,3 @@
+## 2026-07-30 - Replace numpy.exp with math.exp for scalar operation
+**Learning:** In hot paths doing simple scalar math operations (like the sigmoid calculation on reranker logits), using `math.exp` is significantly faster (~5x) than importing and using `numpy.exp` due to the overhead of converting between Python floats and numpy C-types for single scalars.
+**Action:** When calculating exponentials or other mathematical operations on single Python float values, use the standard library `math` module instead of `numpy`. Always wrap `math.exp` with a `try-except OverflowError` to gracefully handle extreme values as numpy does inherently.
