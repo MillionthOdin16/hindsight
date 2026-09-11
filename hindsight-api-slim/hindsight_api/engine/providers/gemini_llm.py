@@ -11,6 +11,7 @@ import base64
 import io
 import json
 import logging
+import os
 import time
 from contextlib import AbstractAsyncContextManager, nullcontext
 from contextvars import ContextVar
@@ -211,7 +212,7 @@ class GeminiLLM(LLMInterface):
 
     def _init_gemini(self) -> None:
         """Initialize Gemini API client."""
-        if not self.api_key:
+        if not self.api_key and not os.getenv("HINDSIGHT_API_SKIP_LLM_VERIFICATION", "false").lower() == "true":
             raise ValueError("Gemini provider requires api_key")
 
         self._client = genai.Client(api_key=self.api_key)

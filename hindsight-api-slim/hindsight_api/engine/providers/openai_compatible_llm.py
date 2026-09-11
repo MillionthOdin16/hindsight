@@ -796,6 +796,7 @@ class OpenAICompatibleLLM(LLMInterface):
                 "ollama-cloud",
             )
             and not self.api_key
+            and not os.getenv("HINDSIGHT_API_SKIP_LLM_VERIFICATION", "false").lower() == "true"
         ):
             raise ValueError(f"API key is required for {self.provider}")
 
