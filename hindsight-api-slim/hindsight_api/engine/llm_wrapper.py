@@ -964,10 +964,7 @@ class LLMProvider:
         vertexai_credentials = None
 
         if self.provider == "vertexai":
-            if (
-                not vertexai_project_id
-                and not os.getenv("HINDSIGHT_API_SKIP_LLM_VERIFICATION", "false").lower() == "true"
-            ):
+            if not vertexai_project_id:
                 raise ValueError(
                     "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID is required for Vertex AI provider. "
                     "Set it to your GCP project ID."
