@@ -1,0 +1,3 @@
+## 2026-09-11 - Fast Math Exponentiation
+**Learning:** Using `numpy.exp` for single scalar operations (like in a loop for scoring/reranking normalization) introduces significant Python-to-C conversion overhead. Built-in `math.exp` is much faster (approx. 5x) for these operations. However, `math.exp` raises an `OverflowError` for large negative inputs (resulting in large positive inputs for `-x`), whereas `numpy.exp` handles this by returning `0.0`.
+**Action:** When replacing `numpy.exp` with `math.exp` for scalar operations in a hot path, explicitly wrap the call in a `try...except OverflowError` block returning `0.0` to safely handle outliers without breaking the application.
