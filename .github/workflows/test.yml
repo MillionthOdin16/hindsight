@@ -1427,6 +1427,7 @@ jobs:
     timeout-minutes: 30
     env:
       HINDSIGHT_API_LLM_PROVIDER: vertexai
+      HINDSIGHT_API_SKIP_LLM_VERIFICATION: true
       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
       HINDSIGHT_API_URL: http://localhost:8888
@@ -1540,6 +1541,7 @@ jobs:
         HINDSIGHT_API_LLM_MODEL=${{ env.HINDSIGHT_API_LLM_MODEL }}
         HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY=/tmp/gcp-credentials.json
         HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID
+        HINDSIGHT_API_SKIP_LLM_VERIFICATION=true
         EOF
 
     - name: Start API server
@@ -1694,9 +1696,11 @@ jobs:
       if: matrix.variant == 'slim'
       env:
         HINDSIGHT_API_LLM_PROVIDER: vertexai
+      HINDSIGHT_API_SKIP_LLM_VERIFICATION: true
         HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
         HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
         HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID: ${{ env.HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID }}
+        HINDSIGHT_API_SKIP_LLM_VERIFICATION: true
         HINDSIGHT_API_EMBEDDINGS_PROVIDER: cohere
         HINDSIGHT_API_RERANKER_PROVIDER: cohere
         HINDSIGHT_API_COHERE_API_KEY: ${{ secrets.COHERE_API_KEY }}
@@ -1722,6 +1726,7 @@ jobs:
     name: test-api (${{ matrix.shard }}/3)
     env:
       HINDSIGHT_API_LLM_PROVIDER: vertexai
+      HINDSIGHT_API_SKIP_LLM_VERIFICATION: true
       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -1815,6 +1820,7 @@ jobs:
     name: Core LLM tests
     env:
       HINDSIGHT_API_LLM_PROVIDER: vertexai
+      HINDSIGHT_API_SKIP_LLM_VERIFICATION: true
       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -1986,6 +1992,7 @@ jobs:
     timeout-minutes: 30
     env:
       HINDSIGHT_API_LLM_PROVIDER: vertexai
+      HINDSIGHT_API_SKIP_LLM_VERIFICATION: true
       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -2127,6 +2134,7 @@ jobs:
     timeout-minutes: 30
     env:
       HINDSIGHT_API_LLM_PROVIDER: vertexai
+      HINDSIGHT_API_SKIP_LLM_VERIFICATION: true
       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
       HINDSIGHT_API_URL: http://localhost:8888
@@ -2198,6 +2206,7 @@ jobs:
         HINDSIGHT_API_LLM_MODEL=${{ env.HINDSIGHT_API_LLM_MODEL }}
         HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY=/tmp/gcp-credentials.json
         HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID
+        HINDSIGHT_API_SKIP_LLM_VERIFICATION=true
         EOF
 
     - name: Start API server
@@ -2239,6 +2248,7 @@ jobs:
     timeout-minutes: 30
     env:
       HINDSIGHT_API_LLM_PROVIDER: vertexai
+      HINDSIGHT_API_SKIP_LLM_VERIFICATION: true
       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
       HINDSIGHT_API_URL: http://localhost:8888
@@ -2315,6 +2325,7 @@ jobs:
         HINDSIGHT_API_LLM_MODEL=${{ env.HINDSIGHT_API_LLM_MODEL }}
         HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY=/tmp/gcp-credentials.json
         HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID
+        HINDSIGHT_API_SKIP_LLM_VERIFICATION=true
         EOF
 
     - name: Start API server
@@ -2369,6 +2380,7 @@ jobs:
     timeout-minutes: 30
     env:
       HINDSIGHT_API_LLM_PROVIDER: vertexai
+      HINDSIGHT_API_SKIP_LLM_VERIFICATION: true
       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
       HINDSIGHT_API_URL: http://localhost:8888
@@ -2504,6 +2516,7 @@ jobs:
         HINDSIGHT_API_LLM_MODEL=${{ env.HINDSIGHT_API_LLM_MODEL }}
         HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY=/tmp/gcp-credentials.json
         HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID
+        HINDSIGHT_API_SKIP_LLM_VERIFICATION=true
         HINDSIGHT_API_DATABASE_BACKEND=${{ env.HINDSIGHT_API_DATABASE_BACKEND }}
         HINDSIGHT_API_DATABASE_URL=${{ env.HINDSIGHT_API_DATABASE_URL }}
         EOF
@@ -2550,6 +2563,7 @@ jobs:
     timeout-minutes: 30
     env:
       HINDSIGHT_API_LLM_PROVIDER: vertexai
+      HINDSIGHT_API_SKIP_LLM_VERIFICATION: true
       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
       HINDSIGHT_API_URL: http://localhost:8888
@@ -2688,6 +2702,7 @@ jobs:
         HINDSIGHT_API_LLM_MODEL=${{ env.HINDSIGHT_API_LLM_MODEL }}
         HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY=/tmp/gcp-credentials.json
         HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID
+        HINDSIGHT_API_SKIP_LLM_VERIFICATION=true
         HINDSIGHT_API_DATABASE_BACKEND=${{ env.HINDSIGHT_API_DATABASE_BACKEND }}
         HINDSIGHT_API_DATABASE_URL=${{ env.HINDSIGHT_API_DATABASE_URL }}
         EOF
@@ -2731,6 +2746,7 @@ jobs:
     timeout-minutes: 30
     env:
       HINDSIGHT_API_LLM_PROVIDER: vertexai
+      HINDSIGHT_API_SKIP_LLM_VERIFICATION: true
       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
       HINDSIGHT_API_URL: http://localhost:8888
@@ -2813,6 +2829,7 @@ jobs:
         HINDSIGHT_API_LLM_MODEL=${{ env.HINDSIGHT_API_LLM_MODEL }}
         HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY=/tmp/gcp-credentials.json
         HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID
+        HINDSIGHT_API_SKIP_LLM_VERIFICATION=true
         EOF
 
     - name: Start API server
@@ -2886,6 +2903,7 @@ jobs:
     timeout-minutes: 30
     env:
       HINDSIGHT_API_LLM_PROVIDER: vertexai
+      HINDSIGHT_API_SKIP_LLM_VERIFICATION: true
       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
       HINDSIGHT_API_URL: http://localhost:8888
@@ -2961,6 +2979,7 @@ jobs:
         HINDSIGHT_API_LLM_MODEL=${{ env.HINDSIGHT_API_LLM_MODEL }}
         HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY=/tmp/gcp-credentials.json
         HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID
+        HINDSIGHT_API_SKIP_LLM_VERIFICATION=true
         EOF
 
     - name: Start API server
@@ -3002,6 +3021,7 @@ jobs:
     timeout-minutes: 30
     env:
       HINDSIGHT_API_LLM_PROVIDER: vertexai
+      HINDSIGHT_API_SKIP_LLM_VERIFICATION: true
       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
       HINDSIGHT_API_URL: http://localhost:8888
@@ -3071,6 +3091,7 @@ jobs:
         HINDSIGHT_API_LLM_MODEL=${{ env.HINDSIGHT_API_LLM_MODEL }}
         HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY=/tmp/gcp-credentials.json
         HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID
+        HINDSIGHT_API_SKIP_LLM_VERIFICATION=true
         EOF
 
     - name: Start API server
@@ -3117,6 +3138,7 @@ jobs:
     timeout-minutes: 30
     env:
       HINDSIGHT_API_LLM_PROVIDER: vertexai
+      HINDSIGHT_API_SKIP_LLM_VERIFICATION: true
       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
       HINDSIGHT_API_URL: http://localhost:8888
@@ -3208,6 +3230,7 @@ jobs:
         HINDSIGHT_API_LLM_MODEL=${{ env.HINDSIGHT_API_LLM_MODEL }}
         HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY=/tmp/gcp-credentials.json
         HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID
+        HINDSIGHT_API_SKIP_LLM_VERIFICATION=true
         EOF
 
     - name: Start API server
@@ -3249,6 +3272,7 @@ jobs:
     timeout-minutes: 30
     env:
       HINDSIGHT_API_LLM_PROVIDER: vertexai
+      HINDSIGHT_API_SKIP_LLM_VERIFICATION: true
       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
       HINDSIGHT_API_URL: http://localhost:8888
@@ -3315,6 +3339,7 @@ jobs:
         HINDSIGHT_API_LLM_MODEL=${{ env.HINDSIGHT_API_LLM_MODEL }}
         HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY=/tmp/gcp-credentials.json
         HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID
+        HINDSIGHT_API_SKIP_LLM_VERIFICATION=true
         EOF
 
     - name: Start API server
@@ -4269,6 +4294,7 @@ jobs:
     timeout-minutes: 30
     env:
       HINDSIGHT_API_LLM_PROVIDER: vertexai
+      HINDSIGHT_API_SKIP_LLM_VERIFICATION: true
       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
       HINDSIGHT_API_EMBEDDINGS_PROVIDER: cohere
@@ -4382,6 +4408,7 @@ jobs:
     timeout-minutes: 30
     env:
       HINDSIGHT_API_LLM_PROVIDER: vertexai
+      HINDSIGHT_API_SKIP_LLM_VERIFICATION: true
       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
       # Prefer CPU-only PyTorch in CI
@@ -4450,6 +4477,7 @@ jobs:
     timeout-minutes: 30
     env:
       HINDSIGHT_API_LLM_PROVIDER: vertexai
+      HINDSIGHT_API_SKIP_LLM_VERIFICATION: true
       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: ${{ github.workspace }}/gcp-credentials.json
       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
       # Force UTF-8 I/O so the CLI's ✓/box-drawing output doesn't crash the
@@ -4696,6 +4724,7 @@ jobs:
     timeout-minutes: 30
     env:
       HINDSIGHT_API_LLM_PROVIDER: vertexai
+      HINDSIGHT_API_SKIP_LLM_VERIFICATION: true
       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
       # For test_server_integration.py compatibility
@@ -4796,6 +4825,7 @@ jobs:
     name: test-doc-examples (${{ matrix.language }})
     env:
       HINDSIGHT_API_LLM_PROVIDER: vertexai
+      HINDSIGHT_API_SKIP_LLM_VERIFICATION: true
       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
       HINDSIGHT_API_URL: http://localhost:8888
@@ -4896,6 +4926,7 @@ jobs:
         HINDSIGHT_API_LLM_MODEL=${{ env.HINDSIGHT_API_LLM_MODEL }}
         HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY=/tmp/gcp-credentials.json
         HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID
+        HINDSIGHT_API_SKIP_LLM_VERIFICATION=true
         EOF
 
     - name: Start API server
@@ -4940,6 +4971,7 @@ jobs:
     timeout-minutes: 30
     env:
       HINDSIGHT_API_LLM_PROVIDER: vertexai
+      HINDSIGHT_API_SKIP_LLM_VERIFICATION: true
       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
