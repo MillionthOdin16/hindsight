@@ -1,0 +1,3 @@
+## 2026-07-28 - Replace numpy.exp with math.exp in Python hot paths
+**Learning:** For single scalar operations in hot paths like `_sigmoid(x: float)` in `hindsight_api/engine/search/reranking.py`, calling `numpy.exp` introduces significant Python-to-C conversion overhead. Furthermore, `math.exp` raises an `OverflowError` for large inputs, while `numpy.exp` handles this internally by returning `0.0` or `inf`.
+**Action:** When replacing `numpy.exp` with `math.exp` for single scalars, wrap the call in a `try/except OverflowError` block. If `math.exp(-x)` overflows, it means `-x` is a very large positive number (i.e. `x` is a large negative number), so `math.exp(-x)` is infinity, and thus `1 / (1 + infinity)` evaluates to `0.0`. So, on `OverflowError`, return `0.0`.

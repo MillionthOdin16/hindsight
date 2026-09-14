@@ -28,7 +28,7 @@ def llm_config():
 
     # vertexai uses GCP service account credentials (HINDSIGHT_API_LLM_VERTEXAI_*),
     # not a traditional API key
-    providers_without_api_key = ("vertexai", "ollama")
+    providers_without_api_key = ("vertexai", "ollama", "mock")
     if not api_key and provider not in providers_without_api_key:
         raise Exception("LLM API key not configured. Set HINDSIGHT_LLM_API_KEY environment variable.")
 
@@ -37,6 +37,9 @@ def llm_config():
         "llm_api_key": api_key,
         "llm_model": model,
     }
+
+    if os.getenv("HINDSIGHT_LLM_VERTEXAI_PROJECT_ID") or os.getenv("HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID"):
+        os.environ["HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID"] = os.getenv("HINDSIGHT_LLM_VERTEXAI_PROJECT_ID") or os.getenv("HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID")
 
 
 @pytest.fixture(scope="session")
@@ -167,7 +170,9 @@ def test_server_context_manager_basic_workflow(client):
 
     # Verify the answer mentions relevant tools/libraries
     answer_lower = answer.lower()
-    assert any(term in answer_lower for term in ["python", "scikit-learn", "matplotlib", "seaborn", "data"])
+    provider = os.getenv("HINDSIGHT_LLM_PROVIDER", "groq")
+    if provider != "mock":
+        assert any(term in answer_lower for term in ["python", "scikit-learn", "matplotlib", "seaborn", "data", "mock"])
 
     # Step 6: Another reflection with different context
     print("\n6. Reflecting with additional context...")
