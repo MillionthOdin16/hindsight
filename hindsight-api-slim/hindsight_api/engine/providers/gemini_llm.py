@@ -211,7 +211,7 @@ class GeminiLLM(LLMInterface):
 
     def _init_gemini(self) -> None:
         """Initialize Gemini API client."""
-        if not self.api_key and not os.getenv("HINDSIGHT_API_SKIP_LLM_VERIFICATION"):
+        if not self.api_key and os.environ.get("HINDSIGHT_API_SKIP_LLM_VERIFICATION", "false").lower() != "true":
             raise ValueError("Gemini provider requires api_key")
 
         self._client = genai.Client(api_key=self.api_key)
@@ -235,7 +235,7 @@ class GeminiLLM(LLMInterface):
         service_account_key = kwargs.get("vertexai_service_account_key")
         credentials = kwargs.get("vertexai_credentials")  # Pre-loaded credentials object
 
-        if not project_id and not os.getenv("HINDSIGHT_API_SKIP_LLM_VERIFICATION"):
+        if not project_id and os.environ.get("HINDSIGHT_API_SKIP_LLM_VERIFICATION", "false").lower() != "true":
             raise ValueError(
                 "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID is required for Vertex AI provider. "
                 "Set it to your GCP project ID."
