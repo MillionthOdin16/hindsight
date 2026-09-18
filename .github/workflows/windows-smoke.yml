@@ -37,7 +37,7 @@ jobs:
       - name: Setup GCP credentials
         shell: bash
         run: |
-          printf '%s' '${{ secrets.GCP_VERTEXAI_CREDENTIALS }}' > gcp-credentials.json
+          printf '%s' '${{ secrets.GCP_VERTEXAI_CREDENTIALS || "{\"project_id\": \"dummy-project-id\"}" }}' > gcp-credentials.json
           PROJECT_ID=$(jq -r '.project_id' gcp-credentials.json)
           echo "HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID=$PROJECT_ID" >> "$GITHUB_ENV"
 
