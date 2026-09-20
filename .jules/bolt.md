@@ -1,0 +1,3 @@
+## 2026-07-27 - Inline numpy import and scalar exp bottleneck
+**Learning:** In the hindsight-api-slim backend, `numpy` was imported inline within the hot path of the reranker's cross-encoder score normalization. Importing a heavy C-extension library like `numpy` inline incurs massive overhead. Furthermore, for scalar operations, `math.exp` is significantly faster than `numpy.exp`. `math.exp` raises an `OverflowError` on large values, which must be handled, whereas `numpy.exp` handles this internally by returning 0.0 or inf.
+**Action:** Always prefer standard library `math` functions for single scalar math operations in hot paths over `numpy`, wrap it in a `try/except OverflowError` block, and avoid inline imports of heavy libraries.
