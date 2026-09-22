@@ -1,0 +1,3 @@
+## 2026-09-22 - Python-to-C Conversion Overhead for Single Scalar Math Ops
+**Learning:** For single scalar operations in hot paths, using `numpy.exp` introduces significant overhead due to Python-to-C conversion and internal dispatching, making it ~8.5x slower than the standard library `math.exp`.
+**Action:** When working on performance optimization tasks on scalar numbers, replace inline `numpy` ops with their `math` equivalents. For exponentiation, remember to catch `OverflowError` (which `numpy` swallows but `math` raises) to maintain correct behavior for edge cases like large negatives yielding `0.0`.
