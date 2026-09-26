@@ -1,0 +1,3 @@
+## 2026-09-26 - math.exp vs numpy.exp overhead in scalar hotpaths
+**Learning:** In the `hindsight_api.engine.search.reranking` file, the `_sigmoid` function uses `numpy.exp` inside a loop for score normalization. Using `math.exp` with a `try/except OverflowError` is roughly 2-3x faster for scalar values because it avoids the overhead of converting between Python floats and C-types that `numpy` incurs, and also avoids the inline import penalty.
+**Action:** Replace `numpy.exp` with `math.exp` for single scalar operations inside loops, specifically in functions like sigmoid normalization. Wrap `math.exp` in `try/except OverflowError` as it throws exceptions on large input values, whereas `numpy.exp` silently returns `0.0` or `inf`.
