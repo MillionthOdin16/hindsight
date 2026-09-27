@@ -1,0 +1,3 @@
+## 2026-06-25 - Python-to-C overhead for scalar operations
+**Learning:** For performance optimization in Python hot paths, avoid heavy dependencies like `numpy` for single scalar operations. Functions like `numpy.exp` incur significant Python-to-C conversion overhead when applied to individual scalar values compared to standard library functions like `math.exp`.
+**Action:** Replace `numpy.exp` with `math.exp` wrapped in a `try/except OverflowError` block for scalar inputs, which is much faster. Also ensure the `math` module is explicitly imported and `numpy` is safely removed if no longer used.
