@@ -37,6 +37,16 @@ def test_retain_every_n_turns_buffers_then_ships_the_batch(provider):
     assert len(fake.retains) == 1
     assert _retain_item(fake)["metadata"]["message_count"] == "4"
 
+def test_shutdown_flushes_partial_retain_batch(provider):
+    instance, fake = provider({"retain_every_n_turns": 3})
+    instance.sync_turn("one", "1")
+    instance.sync_turn("two", "2")
+    assert fake.retains == []
+    instance.shutdown()
+
+    assert len(fake.retains) == 1
+    assert _retain_item(fake)["metadata"]["message_count"] == "4"
+
 
 def test_auto_retain_off_stores_nothing(provider):
     instance, fake = provider({"auto_retain": False})

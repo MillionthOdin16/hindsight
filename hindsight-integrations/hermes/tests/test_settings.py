@@ -31,6 +31,9 @@ def test_bank_id_template_sanitizes_and_collapses_empty_placeholders():
 
 
 def test_observation_scopes_normalization():
+    assert _normalize_observation_scopes("shared") == "shared"
+    assert _normalize_observation_scopes([]) is None
+    assert _normalize_observation_scopes([[], ["source:hermes"]]) == [[], ["source:hermes"]]
     assert _normalize_observation_scopes("per_tag") == "per_tag"
     assert _normalize_observation_scopes(["a", "b"]) == [["a", "b"]]
     assert _normalize_observation_scopes([["a"], ["b"]]) == [["a"], ["b"]]
