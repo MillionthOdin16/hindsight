@@ -1,0 +1,3 @@
+## 2026-07-22 - Avoid inline heavy library imports and operations in hot paths
+**Learning:** Using `numpy.exp` and inline `import numpy` for scalar values inside heavily executed loops (like reranking candidate scores) causes significant Python-to-C overhead. Python's built-in `math.exp` is much faster for single scalar operations.
+**Action:** Always prefer standard library functions like `math.exp` (wrapped in a `try/except OverflowError` to handle large values that numpy would swallow) over numpy for single scalars in hot paths. Never import heavy libraries inline inside frequent function calls.
