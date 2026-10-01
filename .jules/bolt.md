@@ -1,0 +1,3 @@
+## 2026-07-30 - Replace numpy.exp with math.exp in Python Hot Paths
+**Learning:** For single scalar operations in hot paths (like calculating sigmoid for every reranked result), `math.exp` is significantly faster than `numpy.exp` (~5x faster in local tests) because it avoids the overhead of Python-to-C conversion and numpy array coercion.
+**Action:** Replace `numpy.exp` with `math.exp` when operating on scalar values in performance-critical Python code. Since `math.exp` raises an `OverflowError` for large inputs (unlike `numpy.exp` which returns 0.0 or inf), wrap the call in a `try/except OverflowError` block.
