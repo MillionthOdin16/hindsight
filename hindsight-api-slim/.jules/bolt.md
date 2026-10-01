@@ -1,0 +1,3 @@
+## 2026-08-07 - Replace numpy.exp with math.exp for scalar operations
+**Learning:** For performance optimization in Python hot paths, avoid inline imports and prefer standard library functions (e.g., `math.exp`) over heavy dependencies (e.g., `numpy.exp`) for single scalar operations. The Python-to-C conversion overhead of `numpy` makes it significantly slower (up to 7x slower in this case) for individual scalar calculations.
+**Action:** Replace `numpy.exp` with `math.exp` when calculating sigmoid function on individual scalar values (logits). Handle the `math.exp` OverflowError (which `numpy` handles silently) to prevent issues with large inputs. Ensure `math` is explicitly imported globally and `numpy` inline imports are removed.
