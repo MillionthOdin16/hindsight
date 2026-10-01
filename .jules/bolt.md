@@ -1,0 +1,3 @@
+## 2026-01-01 - Replace inline numpy import and np.exp with math.exp in scalar hot path
+**Learning:** Using `numpy.exp` for scalar operations in a hot path (like computing sigmoid in a scoring loop) is significantly slower than using `math.exp` due to the overhead of Python-to-C conversion. Additionally, placing `import numpy as np` inline inside a frequently called function exacerbates the performance penalty.
+**Action:** Always prefer standard library `math.exp` over `numpy.exp` for single scalar operations. Remember to wrap `math.exp` in a `try/except OverflowError` block to handle large inputs that `numpy` would naturally evaluate to `0.0` or `inf`.
