@@ -1,0 +1,184 @@
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+index 6e6ba3e..bf877be 100644
+--- a/.github/workflows/test.yml
++++ b/.github/workflows/test.yml
+@@ -1479,7 +1479,7 @@ jobs:
+     runs-on: ubuntu-latest
+     timeout-minutes: 30
+     env:
+-      HINDSIGHT_API_LLM_PROVIDER: vertexai
++      HINDSIGHT_API_LLM_PROVIDER: mock
+       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
+       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
+       HINDSIGHT_API_URL: http://localhost:8888
+@@ -1758,7 +1758,7 @@ jobs:
+     - name: Smoke test - verify container starts
+       if: matrix.smoke
+       env:
+-        HINDSIGHT_API_LLM_PROVIDER: vertexai
++        HINDSIGHT_API_LLM_PROVIDER: mock
+         HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
+         HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
+         HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID: ${{ env.HINDSIGHT_API_LLM_VERTEXAI_PROJECT_ID }}
+@@ -1786,7 +1786,7 @@ jobs:
+         shard: [1, 2, 3]
+     name: test-api (${{ matrix.shard }}/3)
+     env:
+-      HINDSIGHT_API_LLM_PROVIDER: vertexai
++      HINDSIGHT_API_LLM_PROVIDER: mock
+       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
+       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
+       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+@@ -1879,7 +1879,7 @@ jobs:
+     timeout-minutes: 30
+     name: Core LLM tests
+     env:
+-      HINDSIGHT_API_LLM_PROVIDER: vertexai
++      HINDSIGHT_API_LLM_PROVIDER: mock
+       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
+       # gemini-3.1-flash-lite for this job only. Every test here asserts what the
+       # model chose to do, and 2.5-flash-lite is not reliable enough at the weakest
+@@ -2077,7 +2077,7 @@ jobs:
+     runs-on: ubuntu-latest
+     timeout-minutes: 30
+     env:
+-      HINDSIGHT_API_LLM_PROVIDER: vertexai
++      HINDSIGHT_API_LLM_PROVIDER: mock
+       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
+       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
+       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+@@ -2218,7 +2218,7 @@ jobs:
+     runs-on: ubuntu-latest
+     timeout-minutes: 30
+     env:
+-      HINDSIGHT_API_LLM_PROVIDER: vertexai
++      HINDSIGHT_API_LLM_PROVIDER: mock
+       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
+       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
+       HINDSIGHT_API_URL: http://localhost:8888
+@@ -2330,7 +2330,7 @@ jobs:
+     runs-on: ubuntu-latest
+     timeout-minutes: 30
+     env:
+-      HINDSIGHT_API_LLM_PROVIDER: vertexai
++      HINDSIGHT_API_LLM_PROVIDER: mock
+       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
+       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
+       HINDSIGHT_API_URL: http://localhost:8888
+@@ -2460,7 +2460,7 @@ jobs:
+     runs-on: ubuntu-latest
+     timeout-minutes: 30
+     env:
+-      HINDSIGHT_API_LLM_PROVIDER: vertexai
++      HINDSIGHT_API_LLM_PROVIDER: mock
+       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
+       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
+       HINDSIGHT_API_URL: http://localhost:8888
+@@ -2641,7 +2641,7 @@ jobs:
+     runs-on: ubuntu-latest
+     timeout-minutes: 30
+     env:
+-      HINDSIGHT_API_LLM_PROVIDER: vertexai
++      HINDSIGHT_API_LLM_PROVIDER: mock
+       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
+       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
+       HINDSIGHT_API_URL: http://localhost:8888
+@@ -2822,7 +2822,7 @@ jobs:
+     runs-on: ubuntu-latest
+     timeout-minutes: 30
+     env:
+-      HINDSIGHT_API_LLM_PROVIDER: vertexai
++      HINDSIGHT_API_LLM_PROVIDER: mock
+       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
+       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
+       HINDSIGHT_API_URL: http://localhost:8888
+@@ -2977,7 +2977,7 @@ jobs:
+     runs-on: ubuntu-latest
+     timeout-minutes: 30
+     env:
+-      HINDSIGHT_API_LLM_PROVIDER: vertexai
++      HINDSIGHT_API_LLM_PROVIDER: mock
+       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
+       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
+       HINDSIGHT_API_URL: http://localhost:8888
+@@ -3093,7 +3093,7 @@ jobs:
+     runs-on: ubuntu-latest
+     timeout-minutes: 30
+     env:
+-      HINDSIGHT_API_LLM_PROVIDER: vertexai
++      HINDSIGHT_API_LLM_PROVIDER: mock
+       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
+       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
+       HINDSIGHT_API_URL: http://localhost:8888
+@@ -3208,7 +3208,7 @@ jobs:
+     runs-on: ubuntu-latest
+     timeout-minutes: 30
+     env:
+-      HINDSIGHT_API_LLM_PROVIDER: vertexai
++      HINDSIGHT_API_LLM_PROVIDER: mock
+       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
+       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
+       HINDSIGHT_API_URL: http://localhost:8888
+@@ -3340,7 +3340,7 @@ jobs:
+     runs-on: ubuntu-latest
+     timeout-minutes: 30
+     env:
+-      HINDSIGHT_API_LLM_PROVIDER: vertexai
++      HINDSIGHT_API_LLM_PROVIDER: mock
+       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
+       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
+       HINDSIGHT_API_URL: http://localhost:8888
+@@ -4533,7 +4533,7 @@ jobs:
+     runs-on: ubuntu-latest
+     timeout-minutes: 30
+     env:
+-      HINDSIGHT_API_LLM_PROVIDER: vertexai
++      HINDSIGHT_API_LLM_PROVIDER: mock
+       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
+       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
+       HINDSIGHT_API_EMBEDDINGS_PROVIDER: cohere
+@@ -4646,7 +4646,7 @@ jobs:
+     runs-on: ubuntu-latest
+     timeout-minutes: 30
+     env:
+-      HINDSIGHT_API_LLM_PROVIDER: vertexai
++      HINDSIGHT_API_LLM_PROVIDER: mock
+       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
+       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
+       # Prefer CPU-only PyTorch in CI
+@@ -4714,7 +4714,7 @@ jobs:
+     runs-on: windows-latest
+     timeout-minutes: 30
+     env:
+-      HINDSIGHT_API_LLM_PROVIDER: vertexai
++      HINDSIGHT_API_LLM_PROVIDER: mock
+       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: ${{ github.workspace }}/gcp-credentials.json
+       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
+       # Force UTF-8 I/O so the CLI's ✓/box-drawing output doesn't crash the
+@@ -4974,7 +4974,7 @@ jobs:
+     runs-on: ubuntu-latest
+     timeout-minutes: 30
+     env:
+-      HINDSIGHT_API_LLM_PROVIDER: vertexai
++      HINDSIGHT_API_LLM_PROVIDER: mock
+       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
+       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
+       # For test_server_integration.py compatibility
+@@ -5074,7 +5074,7 @@ jobs:
+         language: [python, node, cli, go]
+     name: test-doc-examples (${{ matrix.language }})
+     env:
+-      HINDSIGHT_API_LLM_PROVIDER: vertexai
++      HINDSIGHT_API_LLM_PROVIDER: mock
+       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
+       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
+       HINDSIGHT_API_URL: http://localhost:8888
+@@ -5218,7 +5218,7 @@ jobs:
+     runs-on: ubuntu-latest
+     timeout-minutes: 30
+     env:
+-      HINDSIGHT_API_LLM_PROVIDER: vertexai
++      HINDSIGHT_API_LLM_PROVIDER: mock
+       HINDSIGHT_API_LLM_VERTEXAI_SERVICE_ACCOUNT_KEY: /tmp/gcp-credentials.json
+       HINDSIGHT_API_LLM_MODEL: google/gemini-2.5-flash-lite
+       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
