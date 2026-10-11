@@ -1,0 +1,3 @@
+## 2024-03-22 - [Optimization] Avoid `numpy.exp` in single scalar operations for `sigmoid`
+**Learning:** For small scalar operations like calculating the sigmoid on a single score during reranking, using `math.exp` is much faster than `numpy.exp` because it avoids Python-to-C overhead.
+**Action:** Replace `numpy.exp` with `math.exp` in `hindsight_api/engine/search/reranking.py` and catch `OverflowError` since `math.exp(-x)` can overflow if `x` is large negative (meaning sigmoid -> 0).
