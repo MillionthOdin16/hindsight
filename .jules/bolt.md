@@ -1,0 +1,3 @@
+## 2026-03-05 - Avoid inline NumPy imports for scalar operations in hot paths
+**Learning:** Found an inline `import numpy as np` in the inner loop (or per-request `_sigmoid` calculation) of `hindsight-api-slim/hindsight_api/engine/search/reranking.py`. While functional, NumPy has massive import and C-extension boundary overhead for single scalar operations. The `np.exp` function should be replaced with `math.exp` with a `try/except OverflowError` block since `math.exp` raises on extreme negative bounds where `np.exp` handles it smoothly.
+**Action:** Replace `np.exp` with `math.exp` for single scalars in hot paths to avoid Python-to-C overhead and remove inline NumPy imports, but always handle `OverflowError`.
