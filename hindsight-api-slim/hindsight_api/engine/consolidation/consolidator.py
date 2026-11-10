@@ -342,6 +342,9 @@ async def _dedup_adjudicate(
         limit=_DEDUP_TOP_K,
         tags=tags,
         tags_match=tags_match,
+        # Only the semantic arm is consumed below. BM25's full-text OR-token
+        # scan adds expensive SQL work without affecting the dedup verdict.
+        enable_text_search=False,
         enable_graph=False,
         temporal_window=None,
     )
