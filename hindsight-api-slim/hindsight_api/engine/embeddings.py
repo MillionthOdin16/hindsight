@@ -1783,6 +1783,7 @@ class LiteLLMEmbeddings(Embeddings):
         self._session: LoopLocalSession | None = None
         self._dimension: int | None = None
         self._dimension_verified = False
+        self._legacy_fallback_used = False
 
     @property
     def provider_name(self) -> str:
@@ -1826,14 +1827,26 @@ class LiteLLMEmbeddings(Embeddings):
                 provider=self.provider_name,
             )
         except Exception as e:
-            raise RuntimeError(f"Failed to connect to LiteLLM proxy at {self.api_base}: {e}") from e
+            # Preserve the legacy 1024-wide proxy-offline startup behavior.
+            # Verify this guessed width against the very first real vector; it
+            # must never silently corrupt pgvector rows when the model differs.
+            self._dimension = 1024
+            self._legacy_fallback_used = True
+            logger.warning(
+                "LiteLLM embedding dimension probe failed (%s); using legacy fallback 1024. "
+                "Prefer %s=1024 when the model's width is known.",
+                type(e).__name__, ENV_EMBEDDINGS_LITELLM_DIMENSIONS,
+            )
+            return
 
         if not result.get("data"):
-            raise RuntimeError(
-                f"LiteLLM proxy at {self.api_base} returned no embedding data for model "
-                f"{self.model}; cannot detect the vector dimension. Set "
-                f"{ENV_EMBEDDINGS_LITELLM_DIMENSIONS} to declare it explicitly."
+            self._dimension = 1024
+            self._legacy_fallback_used = True
+            logger.warning(
+                "LiteLLM embedding dimension probe returned no vectors; using legacy fallback 1024. "
+                "Prefer %s=1024 when the model's width is known.", ENV_EMBEDDINGS_LITELLM_DIMENSIONS,
             )
+            return
         self._dimension = len(result["data"][0]["embedding"])
         logger.info(f"Embeddings: LiteLLM provider initialized (model: {self.model}, dim: {self._dimension})")
 
@@ -1898,16 +1911,19 @@ class LiteLLMEmbeddings(Embeddings):
         column was created at the wrong width. Checked once here, the operator
         gets told which env var to correct.
         """
-        if self.dimensions is None or self._dimension_verified or not embeddings:
+        expected = self.dimensions
+        if expected is None and self._legacy_fallback_used:
+            expected = self._dimension
+        if expected is None or self._dimension_verified or not embeddings:
             return
         actual = len(embeddings[0])
-        self._dimension_verified = True
-        if actual != self.dimensions:
+        if actual != expected:
             raise RuntimeError(
-                f"{ENV_EMBEDDINGS_LITELLM_DIMENSIONS} declares {self.dimensions} dimensions but "
+                f"{ENV_EMBEDDINGS_LITELLM_DIMENSIONS} expected {expected} embedding dimensions but "
                 f"model {self.model} on the LiteLLM proxy at {self.api_base} returned {actual}. "
-                f"Correct the value, or unset it to let startup detect the dimension."
+                "Check the model's actual width and explicitly configure the correct dimension."
             )
+        self._dimension_verified = True
 
 
 class LiteLLMSDKEmbeddings(Embeddings):
