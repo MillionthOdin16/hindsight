@@ -167,6 +167,11 @@ def _normalize_observation_scopes(value: Any) -> Any:
         return None
     if not isinstance(value, (list, tuple)):
         return None
+    # [] means no explicit scopes; [[]] is an intentional global scope, distinct
+    # from a missing value. Preserve empty inner lists for shared + agent-scoped
+    # observations in one request.
+    if not value:
+        return None
     if all(isinstance(entry, str) for entry in value):  # flat tag list -> one scope
         value = [value]
     scopes = [
@@ -177,7 +182,7 @@ def _normalize_observation_scopes(value: Any) -> Any:
         else []
         for entry in value
     ]
-    return [s for s in scopes if s] or None
+    return scopes or None
 
 
 def _sanitize_bank_segment(value: str) -> str:
